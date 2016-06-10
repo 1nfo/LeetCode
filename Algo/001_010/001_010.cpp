@@ -96,3 +96,86 @@ public:
         return s.substr(center-((length-1)>>1),length);
     }
 };
+
+// 006
+class Solution {
+public:
+    string convert(string s, int numRows) {
+        if (numRows<2) return s;
+        string ret="";
+        int c=(numRows-1)<<1;
+        for (int r=0;r<numRows;r++){
+            for (int i=r,j=c-r;i<s.length();i+=c,j+=c){
+                ret+=s[i];
+                if(r!=0&&r!=numRows-1&&j<s.length()) ret+=s[j];
+            }
+        }
+        return ret;
+    }
+    string dummy(string s, int numRows){
+        if (numRows<2) return s;
+        vector<string> ret(numRows);
+        for (int i = 0; i<ret.size(); i++){
+            ret[i]="";
+        }
+        int n=numRows-1,m=n<<1,r;
+        for (int i=0;i<s.length();i++){
+            r=n-abs(i%(m)-n);
+            ret[r].push_back(s[i]);
+        }
+        string str;
+        for (int i = 0; i<ret.size(); i++){
+            str+=ret[i];
+        }
+        return str;
+    }
+};
+
+// 007
+
+class Solution {
+public:
+    int reverse(int x) {
+        if (x>0) return -reverse(-x);
+        long long int ret=0;
+        while (x<0){
+            ret=ret*10+x%10;
+            x/=10;
+        }
+        if (ret<1<<31) return 0;
+        return ret;
+    }
+};
+
+// 008 class Solution {
+public:
+    int myAtoi(string str) {
+        if (str.length()==0) return 0;
+        string l=str.substr(str.find_first_not_of(' '),str.find_last_not_of(" ")-str.find_first_not_of(' ')+1);
+        long ret=0;
+        if (l.length()==0) return 0;
+        int i=0,flag=1;
+        if (l[0]=='+') i++;
+        else if (l[0]=='-') {i++;flag=-1;}
+        while (i<l.length()){
+            if (l[i]-'0'<0||l[i]-'0'>=10) break;
+            ret=ret*10+(l[i++]-'0');
+            if (ret*flag>INT_MAX) return INT_MAX;
+            if (ret*flag<INT_MIN) return INT_MIN;
+        }
+        return (int)ret*flag;
+    }
+};
+ // 009
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        int y=0,z=x;
+        if (z<0) return false;
+        while (z>0){
+            y=y*10+z%10;
+            z/=10;
+        }
+        return y==x;
+    }
+};

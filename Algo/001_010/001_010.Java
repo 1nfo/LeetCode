@@ -93,3 +93,49 @@ public class Solution {
         return s.substring(center-(length-1)/2,center+length/2+1);
     }
 }
+
+// 007
+public class Solution {
+    public int reverse(int x) {
+        if (x>0) return -reverse(-x);
+        long ret=0;
+        while (x<0){
+            ret=ret*10+x%10;
+            x/=10;
+        }
+        if (ret<1<<31) return 0;
+        return (int)ret;
+    }
+}
+
+//008
+public class Solution {
+    public int myAtoi(String str) {
+        int flag=1,i=0;
+        long ret=0;
+        String l= str.trim();
+        if (l.length()==0) return 0;
+        if ('+'==l.charAt(0)) i++;
+        else if ('-'==l.charAt(0)){i++;flag=-1;}
+        while(i<l.length()){
+            if (!Character.isDigit(l.charAt(i))) break;
+            ret=ret*10+(l.charAt(i++)-'0');
+            if (ret*flag>Integer.MAX_VALUE) return Integer.MAX_VALUE;
+            if (ret*flag<Integer.MIN_VALUE) return Integer.MIN_VALUE;
+        }
+        return (int) ret*flag;
+    }
+}
+
+// 009
+public class Solution {
+    public boolean isPalindrome(int x) {
+        int y=0,z=x;
+        if (z<0) return false;
+        while(z>0){
+            y=y*10+z%10;
+            z/=10;
+        }
+        return y==x;
+    }
+}
