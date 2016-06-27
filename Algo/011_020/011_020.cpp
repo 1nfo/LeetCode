@@ -187,3 +187,47 @@ public:
         return ret;
     }
 };
+
+//019
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode * tmp=head;
+        int count=0;
+        while (tmp) {
+            tmp=tmp->next;
+            count++;
+        }
+        tmp=new ListNode(0);
+        tmp->next=head;
+        ListNode * prev=tmp, * curr=head;
+        while (n<count){
+            count--;
+            if (curr==NULL) return head;
+            curr=curr->next;
+            prev=prev->next;
+        }
+        prev->next=curr->next;
+        return tmp->next;
+    }
+};
+
+// 020
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> stk;
+        for (int i=0;i<s.length();i++){
+            char c=s[i];
+            if (c=='(' || c=='{' || c=='[') stk.push(c);
+            else{
+                if (stk.empty()) return false;
+                char t=stk.top();
+                stk.pop();
+                if (t=='(' && c==')' || t=='['&&c==']' || t=='{' && c=='}' ) continue;
+                else return false;
+            }
+        }
+        return stk.empty();
+    }
+};

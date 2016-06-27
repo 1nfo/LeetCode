@@ -175,3 +175,44 @@ public class Solution {
         return ret;
     }
 }
+
+// 019
+public class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode tmp=head;
+        int count=0;
+        while (tmp!=null){
+            count++;
+            tmp=tmp.next;
+        }
+        tmp=new ListNode(0);
+        tmp.next=head;
+        ListNode prev=tmp,curr=head;
+        while (n<count){
+            count--;
+            if (curr==null) return head;
+            prev=prev.next;
+            curr=curr.next;
+        }
+        prev.next=curr.next;
+        return tmp.next;
+    }
+}
+
+//020
+public class Solution {
+    public boolean isValid(String s) {
+        Stack<Character> stack=new Stack<>();
+        for (int i=0;i<s.length();i++){
+            char c=s.charAt(i);
+            if (c=='(' || c=='{' || c=='[' ) stack.push(c);
+            else if (c==')'||c=='}'||c==']'){
+                if (stack.empty()) return false;
+                char tmp= stack.pop();
+                if (tmp=='(' && c==')' || tmp=='{' && c=='}' || tmp=='[' && c==']') continue;
+                else return false;
+            }
+        }
+        return stack.empty();
+    }
+}

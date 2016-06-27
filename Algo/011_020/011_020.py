@@ -128,3 +128,30 @@ class Solution(object):
                                     map[nums[k]]=0
                             else:map[target-nums[k]-nums[i]-nums[j]]=k
         return ret
+
+# 019
+class Solution(object):
+    def removeNthFromEnd(self, head, n):
+        count,tmp=0,head
+        while tmp:count,tmp=count+1,tmp.next
+        tmp=ListNode(None)
+        tmp.next=head
+        prev,curr=tmp,head
+        while n<count:
+            count-=1
+            if curr is None:return head
+            prev,curr=prev.next,curr.next
+        prev.next=curr.next
+        return tmp.next;
+
+#  020
+class Solution(object):
+    def isValid(self, s):
+        stack=[]
+        IN={"(":1,"[":2,"{":3}
+        OUT={")":1,"]":2,"}":3}
+        for i in s:
+            if i in IN:stack.append(i)
+            elif i in OUT:
+                if not stack or IN[stack.pop()]!=OUT[i]:return False
+        return stack==[]
