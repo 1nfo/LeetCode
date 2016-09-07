@@ -32,6 +32,56 @@ public class Solution {
         nums[j]^=nums[i];
     }
 }
+// 032
+public class Solution {
+    public int longestValidParentheses(String s) {
+        int [] h = new int[s.length()];
+        int count=0,res=0;
+        for(int i=0;i<s.length();i++){
+            if(s.charAt(i)=='(') count++;
+            else if(count>0){
+                h[i]=2+h[i-1];
+                if(i>h[i]) h[i]+=h[i-h[i]];
+                count--;
+            }
+            res=res>h[i]?res:h[i];
+        }
+        return res;
+    }
+}
+
+// 035
+public class Solution {
+    public int search(int[] nums, int target) {
+        if(nums.length==0) return -1;
+        if(nums.length==1){
+            if(nums[0]==target) return 0;
+            return -1;
+        }
+        int a=0,b=nums.length,border=0,res=0;
+        if(nums[0]<nums[nums.length-1]) return bs(nums,target,0,nums.length);
+        if(target<nums[0]&&target>nums[nums.length-1]) return -1;
+        while(a<b){
+            border = (a+b)/2;
+            //System.out.println(a+":"+border+":"+b);
+            if(nums[border-1]>nums[border]) break;
+            if(nums[border]>nums[a]) a=border;
+            else if(nums[border]<nums[b-1]) b=border;
+        }
+        if((target<=nums[nums.length-1])) res = bs(nums,target,border,nums.length);
+        if(target>=nums[0]) res = bs(nums,target,0,border);
+        return res;
+    }
+    int bs(int[] nums,int target,int l, int r){
+        while(l<r){
+            int mid = (l+r)/2;
+            if(target==nums[mid]) return mid;
+            else if(target<nums[mid]) r=mid;
+            else if(target>nums[mid]) l=mid+1;
+        }
+        return -1;
+    }
+}
 
 // 034
 public class Solution {
@@ -96,6 +146,50 @@ public class Solution {
             set.add(c);
         }
         return false;
+    }
+}
+
+// 037
+public class Solution {
+    public void solveSudoku(char[][] board) {
+        if(board==null) return;
+        solve(board);
+    }
+    boolean solve(char[][] board){
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                if(board[i][j]=='.'){
+                    for(int k=0;k<9;k++){
+                        char chk = (char)('1'+k);
+                        if(checkRow(board,i,chk)&&checkCol(board,j,chk)&&checkRnd(board,i,j,chk)){
+                            board[i][j]=chk;
+                            if(solve(board)) return true;
+                            board[i][j]='.';
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    boolean checkRow(char [][] b,int row,char chk){
+        for(char c :b[row]) if(c==chk) return false;
+        return true;
+    }
+    boolean checkCol(char [][] b,int col, char chk){
+        for(int i=0;i<9;i++) if(b[i][col]== chk) return false;
+        return true;
+    }
+    boolean checkRnd(char [][] b,int x,int y,char chk){
+        x/=3;
+        y/=3;
+        x*=3;
+        y*=3;
+        for(int xx=0;xx<3;xx++)
+            for(int yy=0;yy<3;yy++)
+                if(b[xx+x][yy+y]==chk) return false;
+        return true;
     }
 }
 
@@ -179,7 +273,46 @@ public class Solution {
     }
 }
 
-//041
+// 041
+public class Solution {
+    public int firstMissingPositive(int[] nums) {
+        for(int i=0;i<nums.length;){
+            if(nums[i]<=0||nums[i]>nums.length||nums[nums[i]-1]==nums[i]) i++;
+            else if(nums[nums[i]-1]!=nums[i]) swap(nums, nums[i]-1,i);
+        }
+        int i;
+        for(i=0;i<nums.length;i++){
+            if(nums[i]!=i+1) break;
+        }
+        return i+1;
+    }
+    void swap(int[] A,int i,int j){
+        A[i]^=A[j];
+        A[j]^=A[i];
+        A[i]^=A[j];
+    }
+}
+
+// 042
+public class Solution {
+    public int trap(int[] height) {
+        int begin=0,end=height.length-1,level=0;
+        int total=0,block=0;
+        while(begin<end){
+            if(height[begin]<height[end]){
+                level=level>height[begin]?level:height[begin];
+                block+=height[begin++];
+            }else{
+                level=level>height[end]?level:height[end];
+                block+=height[end--];
+            }
+            total+=level;
+        }
+        return total-block;
+    }
+}
+
+//043
 public class Solution {
     public String multiply(String num1, String num2) {
         int a = num1.length(),b=num2.length(), l = a+b-1;
@@ -203,22 +336,37 @@ public class Solution {
     }
 }
 
-// 042
+//044
 public class Solution {
-    public int trap(int[] height) {
-        int begin=0,end=height.length-1,level=0;
-        int total=0,block=0;
-        while(begin<end){
-            if(height[begin]<height[end]){
-                level=level>height[begin]?level:height[begin];
-                block+=height[begin++];
-            }else{
-                level=level>height[end]?level:height[end];
-                block+=height[end--];
+    public boolean isMatch(String s, String p) {
+        int m=s.length(),n=p.length();
+        int i=0,j=0,a=-1,b=-1;
+        if(n==0&&m==0) return true;
+        if(n==0) return false;
+        while(i<m){
+            if(j<n&&(p.charAt(j)=='?'||p.charAt(j)==s.charAt(i))) {i++;j++;}
+            else if(j<n&&p.charAt(j)=='*'){
+                a=i+1;b=j++;
             }
-            total+=level;
+            else if(a>=0){
+                i=a;j=b;
+            }
+            else return false;
         }
-        return total-block;
+        while(j<n) if(p.charAt(j++)!='*') return false;
+        return true;
+    }
+}
+
+//045
+public class Solution {
+    public int jump(int[] nums) {
+        int reach = 0, count = 0,lastStep = 0;
+        for(int i=0;i<nums.length-1;i++){
+            reach = reach>i+nums[i]?reach:(nums[i]+i);
+            if(i==lastStep) {count++;lastStep=reach;}
+        }
+        return count;
     }
 }
 
