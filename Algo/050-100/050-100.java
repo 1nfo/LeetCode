@@ -263,6 +263,29 @@ public class Solution {
     }
 }
 
+//061
+public class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if(head==null) return head;
+        int count=0;
+        ListNode p=new ListNode(0),newTail=p,newHead,tmp;
+        p.next=head;
+        tmp=p;
+        while(tmp.next!=null) {tmp=tmp.next;count++;}
+        k%=count;
+        while(p.next!=null){
+            p=p.next;
+            count--;
+            if(count==k) newTail=p;
+        }
+        if(k==0) return head;
+        p.next=head;
+        newHead=newTail.next;
+        newTail.next=null;
+        return newHead;
+    }
+}
+
 //062
 public class Solution {
     public int uniquePaths(int m, int n) {
