@@ -359,6 +359,233 @@ public class Solution {
     }
 }
 
+//071
+public class Solution {
+    public String simplifyPath(String path) {
+        Stack<String> s = new Stack<>(),ss=new Stack<>();
+        StringBuilder ret = new StringBuilder();
+        String[] paths = path.split("\\/+");
+        for (String p:paths){
+            switch (p){
+                case "":;
+                case ".":break;
+                case "..":if(!s.empty()) s.pop();break;
+                default:s.push(p);
+            }
+        }
+        while(!s.empty()) ss.push(s.pop());
+        while(!ss.empty()) ret.append("/"+ss.pop());
+        if(ret.length()==0) ret.append("/");
+        return ret.toString();
+    }
+}
+
+// 073
+public class Solution {
+    public void setZeroes(int[][] matrix) {
+        boolean[] row = new boolean[matrix.length],col = new boolean[matrix[0].length];
+        for(int i=0;i<matrix.length;i++)
+            for(int j=0;j<matrix[0].length;j++)
+                if(matrix[i][j]==0)
+                    row[i]=col[j]=true;
+        for(int i=0;i<matrix.length;i++)
+            for(int j=0;j<matrix[0].length;j++)
+                if(col[j]||row[i])
+                    matrix[i][j]=0;
+
+    }
+}
+
+// 074
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int m = matrix.length,n=matrix[0].length,i;
+        if(matrix[0][0]>target) return false;
+        for(i=0;i<m-1;i++)
+           if(matrix[i+1][0]>target) break;
+        for(int j=0;j<n;j++)
+            if(matrix[i][j]==target) return true;
+        return false;
+    }
+}
+
+// 075
+public class Solution {
+    public void sortColors(int[] nums) {
+        for(int i=2,j=nums.length-1;i>0;i--)
+            for(int k=0;k<j;k++){
+                int c = nums[k];
+                if(c==i) {
+                    while(j>0&&nums[j]>=i) j--;
+                    if(k<j){
+                        nums[k]=nums[j];
+                        nums[j--]=c;
+                    }
+                }
+            }
+    }
+}
+
+//077
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    private int n;
+    private int k;
+    private boolean[] used;
+    public List<List<Integer>> combine(int n, int k) {
+        this.n=n;
+        this.k=k;
+        this.used = new boolean[n];
+        help(0);
+        return ret;
+    }
+
+    void help(int j){
+        for(int i=0;i<n;i++){
+            if(used[i]||i<j) continue;
+            list.add(i+1);
+            used[i]=true;
+            if(list.size()==k) ret.add(new ArrayList(list));
+            else help(i);
+            list.remove(list.size()-1);
+            used[i]=false;
+        }
+    }
+}
+
+// 078
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    private boolean [] used;
+
+    public List<List<Integer>> subsets(int[] nums) {
+        this.used = new boolean[nums.length];
+        this.ret.add(this.list);
+        help(nums,0);
+        return this.ret;
+    }
+
+    void help(int[] nums,int j){
+        for(int i=0;i<nums.length;i++){
+            if(used[i]||i<j) continue;
+            list.add(nums[i]);
+            used[i]=true;
+            ret.add(new ArrayList(list));
+            help(nums,i);
+            list.remove(list.size()-1);
+            used[i]=false;
+        }
+    }
+}
+
+//079
+public class Solution {
+    private int i,j,m,n;
+    private boolean[][] used;
+    private char[][] board;
+    private String word;
+
+    public boolean exist(char[][] board, String word) {
+       this.board=board;
+       this.word=word;
+       this.m=board.length;
+       this.n=board[0].length;
+       used = new boolean[m][n];
+       for(this.i=0;i<m;i++){
+            for(this.j=0;j<n;j++){
+                if(board[i][j]==word.charAt(0)){
+                    used[i][j]=true;
+                    if(searchAround(1)) return true;
+                    used[i][j]=false;
+                }
+            }
+        }
+        return false;
+    }
+    boolean searchAround(int pos){
+        if(pos==word.length()) return true;
+        if(i>0&&check(word.charAt(pos),i-1,j)){
+            used[--i][j]=true;
+            if(searchAround(pos+1)) return true;
+            used[i++][j]=false;
+        }  if(i<m-1&&check(word.charAt(pos),i+1,j)){
+            used[++i][j]=true;
+            if(searchAround(pos+1)) return true;
+            used[i--][j]=false;
+        }  if(j>0&&check(word.charAt(pos),i,j-1)){
+            used[i][--j]=true;
+            if(searchAround(pos+1)) return true;
+            used[i][j++]=false;
+        }  if(j<n-1&&check(word.charAt(pos),i,j+1)){
+            used[i][++j]=true;
+            if(searchAround(pos+1)) return true;
+            used[i][j--]=false;
+        }
+        return false;
+    }
+    boolean check(char c,int x, int y){
+        return board[x][y]==c&&!used[x][y];
+    }
+}
+
+// 081
+public class Solution {
+    public boolean search(int[] nums, int target) {
+        if(nums.length==0) return false;
+        if(nums.length==1) return nums[0]==target;
+        int i=0,j=nums.length-1;
+        while(i<j){//----------------------<=
+            int mid = (i+j)/2;//----------
+            if(nums[mid]==target) return true;
+            if(nums[i]==target) return true;
+            if(nums[j]==target) return true;
+            if(nums[mid]>nums[i]){
+                if(target>nums[mid]) i=mid+1;
+                else if(target>=nums[i]) j=mid-1;
+                else i=mid+1;
+            }
+            else if(nums[mid]<nums[i]){
+                if(target<nums[mid]) j=mid-1;
+                else if(target<=nums[j]) i=mid+1;
+                else j=mid-1;
+            }
+            else{
+                if(nums[j]!=nums[i]) i=mid+1;
+                else {i++;j--;}
+            }
+        }
+        return false;
+    }
+}
+
+// 082
+public class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head==null||head.next==null) return head;
+        ListNode ret = new ListNode(head.val-1),prev=head,curr=head,curr_=ret,prev_;
+        ret.next = head;
+        while(prev!=null){
+            if(curr!=null) curr=curr.next;
+            if(curr==null||curr.val!=prev.val){
+                prev_ = curr_;
+                curr_= prev;
+                prev_.next=curr_;
+            }
+            else{
+                while(curr!=null&&curr.val==prev.val){
+                    prev=curr;
+                    curr=curr.next;
+                }
+            }
+            prev=curr;
+        }
+        curr_.next=prev;
+        return ret.next;
+    }
+}
+
 // 083
 public class Solution {
     public ListNode deleteDuplicates(ListNode head) {
