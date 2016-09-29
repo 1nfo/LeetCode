@@ -598,6 +598,34 @@ public class Solution {
         return head;
     }
 
+//086
+public class Solution {
+    public ListNode partition(ListNode head, int x) {
+        ListNode ret=new ListNode(0),curr=ret,last,prev;
+        ret.next=head;
+        while(curr.next!=null){
+            if(curr.next.val>=x) break;
+            curr=curr.next;
+        }
+        last = curr;
+        prev=curr;
+        curr=curr.next;
+        while(curr!=null){
+            if(curr.val<x){
+                prev.next=curr.next;
+                curr.next=last.next;
+                last.next=curr;
+                last=last.next;
+                curr=prev.next;
+            }
+            else{
+                prev=curr;
+                curr=curr.next;
+            }
+        }
+        return ret.next;
+    }
+}
 
 // 088
 public class Solution {
@@ -607,6 +635,78 @@ public class Solution {
             else nums1[k]=nums1[--m];
         }
 
+    }
+}
+
+// 089
+public class Solution {
+    public List<Integer> grayCode(int n) {
+        int m = pow2(n),end=1;
+
+        List<Integer> ret = new ArrayList<>();
+        ret.add(0);
+        for(int i=0;i<n;i++){
+                for(int k=end-1;k>=0;k--){
+                    ret.add(pow2(i)+ret.get(k));
+                }
+                end*=2;
+        }
+        return ret;
+    }
+    int pow2(int p){
+        int ret = 1;
+        while(p-->0) ret*=2;
+        return ret;
+    }
+}
+
+// 090
+public class Solution {
+    private List<List<Integer>> ret;
+    private List<Integer> list;
+    private int n;
+    private boolean[] used;
+
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        this.ret = new ArrayList<>();
+        this.list = new ArrayList<>();
+        this.n = nums.length;
+        if(n==0) return ret;
+        this.used = new boolean[n];
+        Arrays.sort(nums);
+        help(nums,0);
+        return this.ret;
+    }
+
+    void help(int[] nums,int pos){
+        int prev = nums[0]-1;
+        ret.add(new ArrayList<>(list));
+        for(int i=pos;i<n;i++){
+            if(used[i] || prev==nums[i]) continue;
+            prev=nums[i];
+            used[i]=true;
+            list.add(nums[i]);
+            help(nums,i+1);
+            used[i]=false;
+            list.remove(list.size()-1);
+        }
+    }
+}
+
+// 091
+public class Solution {
+    public int numDecodings(String s) {
+        if(s.length()==0||s.charAt(0)=='0') return 0;
+        int[] ret = new int[s.length()];
+        for(int i=0;i<s.length();i++){
+            int c = s.charAt(i)-48;
+            // current number
+            ret[i]=c==0?0:(i==0?1:ret[i-1]);
+            // current + previous
+            ret[i]+=(i==0||s.charAt(i-1)-48==0||(s.charAt(i-1)-48)*10+c>26)?0:(i==1?1:ret[i-2]);
+
+        }
+        return ret[s.length()-1];
     }
 }
 
