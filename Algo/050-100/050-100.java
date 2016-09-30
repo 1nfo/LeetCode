@@ -710,6 +710,35 @@ public class Solution {
     }
 }
 
+// 092
+public class Solution {
+    private List<String> ret;
+    private StringBuilder sb = new StringBuilder();
+
+    public List<String> restoreIpAddresses(String s) {
+        ret = new ArrayList<>();
+        help(s,0,0);
+        return this.ret;
+    }
+
+    void help(String s,int pos,int lv){
+        if(lv==4){
+            if(s.length()!=pos)return;
+            else ret.add(sb.toString());
+        }
+        for(int i=pos+1;i<=s.length()&&i<=pos+3;i++){
+            if(i>pos+1&&s.charAt(pos)=='0') return;
+            String sub = s.substring(pos,i);
+            int num = Integer.parseInt(sub);
+            if(num>=0&&num<256){
+                sb.append(sub+(lv==3?"":"."));
+                help(s,i,lv+1);
+                sb.delete(sb.length()-sub.length()-(lv==3?0:1),sb.length());
+            }
+        }
+    }
+}
+
 // 100
 public class Solution {
     public boolean isSameTree(TreeNode p, TreeNode q) {
