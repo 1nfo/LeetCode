@@ -739,6 +739,96 @@ public class Solution {
     }
 }
 
+// 095
+public class Solution {
+    public List<TreeNode> generateTrees(int n) {
+        if(n==0) return new ArrayList<>();
+        return help(0,n);
+    }
+    List<TreeNode> help(int start,int end){
+        List<TreeNode> ret = new ArrayList<>(),left,right;
+        if(start==end) {
+            ret.add(null);
+            return ret;
+        }
+        for(int i=start;i<end;i++){
+            TreeNode node = new TreeNode(i+1);
+            left = help(start,i);
+            right = help(i+1,end);
+            for(TreeNode l:left){
+                for(TreeNode r:right){
+                    node.left=l;
+                    node.right=r;
+                    ret.add(clone(node));
+                }
+            }
+        }
+        return ret;
+    }
+
+    TreeNode clone(TreeNode n){
+        if(n==null) return null;
+        TreeNode node = new TreeNode(n.val);
+        node.left = clone(n.left);
+        node.right = clone(n.right);
+        return node;
+    }
+}
+
+// 096
+public class Solution {
+    public int numTrees(int n) {
+        int [] ret = new int[n+1];
+        ret[0]=1;
+        ret[1]=1;
+        for(int i=2;i<=n;i++){
+            for(int j=0;j<i;j++){
+                ret[i]+=ret[j]*ret[i-1-j];
+            }
+        }
+        return ret[n];
+    }
+}
+
+// 098
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public boolean isValidBST(TreeNode root) {
+        return help(root,(long) Integer.MIN_VALUE-1,(long)Integer.MAX_VALUE+1);
+        // if(root==null) return true;
+        // if(isValidBST(root.left)&&isValidBST(root.right))
+        //     if(root.left==null||big(root.left)<root.val)
+        //         if(root.right==null||small(root.right)>root.val)
+        //             return true;
+        // return false;
+    }
+
+    boolean help(TreeNode root, long lb, long ub){
+        if(root==null) return true;
+        if(root.val>lb&&root.val<ub) return help(root.left,lb,root.val)&&help(root.right,root.val,ub);
+        return false;
+    }
+
+    int big(TreeNode node){
+        if(node.right==null) return node.val;
+        else return big(node.right);
+    }
+
+    int small(TreeNode node){
+        if(node.left==null) return node.val;
+        else return small(node.left);
+    }
+
+}
+
 // 100
 public class Solution {
     public boolean isSameTree(TreeNode p, TreeNode q) {

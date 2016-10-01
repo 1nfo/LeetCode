@@ -28,12 +28,77 @@ public class Solution {
     }
 }
 
+// 103
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        add(root,0);
+        int lv = 0;
+        for(List list:ret){
+            if(lv++%2==1) Collections.reverse(list);
+        }
+        return ret;
+    }
+
+    void add(TreeNode node, int level){
+        if(node==null) return;
+        if(ret.size()==level) ret.add(new ArrayList<>());
+        ret.get(level).add(node.val);
+        add(node.left,level+1);
+        add(node.right,level+1);
+    }
+}
+
 // 104
 public class Solution {
     public int maxDepth(TreeNode root) {
         if(root==null) return 0;
         int a=maxDepth(root.left),b=maxDepth(root.right);
         return (a>b?a:b)+1;
+    }
+}
+
+// 105
+public class Solution {
+    private int[] pre,in;
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        pre = preorder;
+        in = inorder;
+        return help(0,pre.length,0,in.length);
+    }
+
+    TreeNode help(int pStart,int pEnd,int iStart,int iEnd){
+        if(pStart==pEnd) return null;
+        int target = pre[pStart],offset=0;
+        TreeNode node = new TreeNode(target);
+        for(int i=iStart;i<iEnd;i++) if(in[i]==target) {offset = i-iStart;break;}
+        node.left = help(pStart+1,pStart+1+offset,iStart,iStart+offset);
+        node.right = help(pStart+1+offset,pEnd,iStart+offset+1,iEnd);
+        return node;
+    }
+}
+
+// 106
+public class Solution {
+    private int[] in,post;
+
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        in = inorder;
+        post = postorder;
+        return help(0,inorder.length,0,postorder.length);
+    }
+
+    TreeNode help(int iStart, int iEnd, int pStart, int pEnd){
+        if(iStart == iEnd) return null;
+        int target = post[pEnd-1],offset=0;
+        TreeNode node = new TreeNode(target);
+        for(int i=iStart;i<iEnd;i++){
+            if(in[i]==target) {offset = i-iStart;break;}
+        }
+        node.left = help(iStart,iStart+offset,pStart,pStart+offset);
+        node.right = help(iStart+offset+1,iEnd,pStart+offset,pEnd-1);
+        return node;
     }
 }
 
@@ -54,7 +119,45 @@ public class Solution {
     }
 }
 
-//110
+// 108
+public class Solution {
+    private int[] nums;
+
+    public TreeNode sortedArrayToBST(int[] nums) {
+        this.nums = nums;
+        return help(0,nums.length);
+    }
+
+    TreeNode help(int start, int end){
+        if(start == end) return null;
+        int mid = (start+end)/2;
+        TreeNode  node = new TreeNode(nums[mid]);
+        node.left = help(start,mid);
+        node.right = help(mid+1,end);
+        return node;
+
+// 109
+public class Solution {
+    public TreeNode sortedListToBST(ListNode head) {
+        if(head == null) return null;
+        ListNode fast=head,slow=head,prev=null;
+        while(fast!=null){
+            fast=fast.next;
+            if(fast==null) break;
+            fast = fast.next;
+            prev=slow;
+            slow=slow.next;
+        }
+        if(slow==head) head=null;
+        else prev.next=null;
+        TreeNode node = new TreeNode(slow.val);
+        node.left = sortedListToBST(head);
+        node.right = sortedListToBST(slow.next);
+        return node;
+    }
+}
+
+// 110
 public class Solution {
     public boolean isBalanced(TreeNode root) {
         if(root==null) return true;
