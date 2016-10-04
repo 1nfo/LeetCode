@@ -194,6 +194,65 @@ public class Solution {
     }
 }
 
+// 113
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        if (root!=null) help(root,sum);
+        return ret;
+    }
+
+    void help(TreeNode node, int target){
+        list.add(node.val);
+        if(node.left==null&&node.right==null){
+            if(target==node.val) ret.add(new ArrayList<>(list));
+        } else {
+            if(node.left!=null)help(node.left,target-node.val);
+            if(node.right!=null)help(node.right,target-node.val);
+        }
+        list.remove(list.size()-1);
+    }
+}
+
+// 114
+public class Solution {
+    public void flatten(TreeNode root) {
+        if(root != null) help(root);
+    }
+    TreeNode help(TreeNode node){
+        if(node.left==null&&node.right==null) return node;
+        TreeNode sortedL=null,sortedR=null;
+        if(node.left!=null) sortedL= help(node.left);
+        if(node.right!=null) sortedR = help(node.right);
+        if(sortedL!=null){
+            sortedL.right=node.right;
+            node.right=node.left;
+            node.left=null;
+        }
+        return sortedR!=null?sortedR:sortedL;
+    }
+}
+
+// 116
+public class Solution {
+    List<TreeLinkNode> prev = new ArrayList<>();
+    public void connect(TreeLinkNode root) {
+        help(root,0);
+    }
+    void help(TreeLinkNode node, int level){
+        if(node == null) return;
+        if(prev.size()==level) prev.add(node);
+        else{
+            prev.get(level).next=node;
+            prev.set(level,node);
+        }
+        help(node.left,level+1);
+        help(node.right,level+1);
+    }
+}
+
 // 118
 public class Solution {
     public List<List<Integer>> generate(int numRows) {
@@ -226,7 +285,31 @@ public class Solution {
     }
 }
 
-//122
+// 120
+public class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int size = triangle.size();
+        int[][] dp = new int[size][size];
+        dp[0][0] = triangle.get(0).get(0);
+        for(int i=0;i<size-1;i++){
+            dp[i+1][0]+=dp[i][0];
+            for(int j=1;j<=i;j++){
+                dp[i+1][j]+=Math.min(dp[i][j],dp[i][j-1]);
+            }
+            dp[i+1][i+1]+=dp[i][i];
+            for(int j=0;j<=i+1;j++){
+                dp[i+1][j] += triangle.get(i+1).get(j);
+            }
+        }
+        int ret = dp[size-1][0];
+        for(int i=1;i<size;i++){
+            if(ret>dp[size-1][i]) ret=dp[size-1][i];
+        }
+        return ret;
+    }
+}
+
+// 121
 public class Solution {
     public int maxProfit(int[] prices) {
         if(prices.length==0) return 0 ;
@@ -236,6 +319,18 @@ public class Solution {
            if(price<buy) buy=price;
         }
         return profit;
+    }
+}
+
+// 122
+public class Solution {
+    public int maxProfit(int[] prices) {
+        int ret = 0;
+        for(int i = 1;i<prices.length;i++){
+            int diff = prices[i]-prices[i-1];
+            if(diff>0) ret+=diff;
+        }
+        return ret;
     }
 }
 
@@ -251,6 +346,44 @@ public class Solution {
             l++;r--;
         }
         return true;
+    }
+}
+
+// 127
+public class Solution {
+    public int ladderLength(String beginWord, String endWord, Set<String> wordList) {
+        int ret=1;
+        Set<String> bSet = new HashSet<>(),eSet = new HashSet<>(),tmp;
+
+        bSet.add(beginWord);
+        eSet.add(endWord);
+        wordList.add(endWord);
+
+        while(!bSet.isEmpty()&&!eSet.isEmpty()){
+            if(bSet.size()>eSet.size()) {
+                tmp = bSet;
+                bSet = eSet;
+                eSet = tmp;
+            }
+            tmp = new HashSet<>();
+            for(String s:bSet){
+                for(int j=0;j<s.length();j++){
+                    char [] arr = s.toCharArray();
+                    for(char a='a';a<='z';a++){
+                        arr[j]=a;
+                        String built = new String(arr);
+                        if(eSet.contains(built)) return ret+1;
+                        if(wordList.contains(built)){
+                            tmp.add(built);
+                            wordList.remove(built);
+                        }
+                    }
+                }
+            }
+            bSet = tmp;
+            ret++;
+        }
+        return 0;
     }
 }
 
