@@ -387,7 +387,163 @@ public class Solution {
     }
 }
 
-//141
+// 129
+public class Solution {
+    private int ret = 0;
+
+    public int sumNumbers(TreeNode root) {
+        help(root,0,0);
+        return ret;
+    }
+
+    void help(TreeNode node,int sum,int lv){
+        if(node == null) return;
+        sum*=10;
+        sum+=node.val;
+        if(node.left==null&&node.right==null) ret+=sum;
+        help(node.left,sum,lv+1);
+        help(node.right,sum,lv+1);
+    }
+}
+
+// 130
+public class Solution {
+    public void solve(char[][] board) {
+        int m = board.length;
+        if(m==0) return;
+        int n = board[0].length;
+
+        Queue<Integer> queue = new LinkedList<>();
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(i==0||j==0||i==m-1||j==n-1) queue.add(i*n+j);
+            }
+        }
+
+        while (!queue.isEmpty()){
+            int p = queue.remove();
+            int x=p/n,y=p%n;
+            if(board[x][y]!='X'){
+                board[x][y]='.';
+                int c=0,xx,yy;
+                while(c++<4){
+                    xx=x+(c==1?-1:0)+(c==2?1:0);
+                    yy=y+(c==3?-1:0)+(c==4?1:0);
+                    if(xx>=0&&yy>=0&&xx<m&&yy<n&&board[xx][yy]=='O'){
+                        queue.add(xx*n+yy);
+                        board[xx][yy]='.';
+                    }
+                }
+            }
+
+        }
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(board[i][j]=='.') board[i][j]='O';
+                else board[i][j]='X';
+            }
+        }
+    }
+}
+
+// 131
+public class Solution {
+    private List<List<String>> ret = new ArrayList<>();
+    private List<String> list = new ArrayList<>();
+
+    public List<List<String>> partition(String s) {
+        help(s.toCharArray(),0);
+        return ret;
+    }
+
+    void help(char[] arr,int pos){
+        if(pos==arr.length) ret.add(new ArrayList<>(list));
+        for(int i=pos;i<arr.length;i++){
+            boolean isP= true;
+            for(int j=pos;j<i+1;j++){
+                if(arr[j]!=arr[pos+i-j]){
+                    isP = false;
+                    break;
+                }
+            }
+            if(isP) {
+                list.add(new String(Arrays.copyOfRange(arr, pos, i+1)));
+                help(arr,i+1);
+                list.remove(list.size()-1);
+            }
+        }
+    }
+}
+
+// 133
+public class Solution {
+    private Map<UndirectedGraphNode,UndirectedGraphNode> map = new HashMap<>();
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        if(node==null) return null;
+        UndirectedGraphNode ret = new UndirectedGraphNode(node.label);
+        if(!map.containsKey(node)){
+            map.put(node,ret);
+            for(UndirectedGraphNode subNode:node.neighbors){
+                ret.neighbors.add(cloneGraph(subNode));
+            }
+        }
+        return map.get(node);
+    }
+}
+
+// 134
+public class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int ret=0,rem=0,tot=0;
+        for(int i=0;i<gas.length;i++){
+            rem+=gas[i]-cost[i];
+            tot+=gas[i]-cost[i];
+            if(rem<0) {ret=i+1;rem=0;}
+        }
+        if(tot>=0) return ret;
+        return -1;
+    }
+}
+
+// 137
+public class Solution {
+    public int singleNumber(int[] nums) {
+        int a=0,b=0;
+        for(int c:nums){
+            int ta = a;
+            a = (a^b)&~(b^c);
+            b = (~ta)&(b^c);
+        }
+        return a|b;
+    }
+}
+
+// 139
+public class Solution {
+    public boolean wordBreak(String s, Set<String> wordDict) {
+        if(s==null) return true;
+        boolean[] dp = new boolean[s.length()+1];
+        dp[0]=true;
+
+        for(int start=0;start<s.length();start++){
+            if(dp[start]){
+                for(String d:wordDict){
+                    int i=start,j=0;
+                    while(i<s.length()&&j<d.length()&&s.charAt(i)==d.charAt(j)){
+                        i++;
+                        j++;
+                    }
+                    if(j==d.length()) dp[start+j]=true;
+                }
+            }
+
+        }
+
+        return dp[s.length()];
+    }
+}
+
+// 141
 public class Solution {
     public boolean hasCycle(ListNode head) {
         if(head==null||head.next==null) return false;
@@ -398,6 +554,116 @@ public class Solution {
             b=b.next.next;
         }
         return false;
+    }
+}
+
+// 142
+public class Solution {
+    public ListNode detectCycle(ListNode head) {
+        if(head==null) return null;
+        ListNode s=head,f=head;
+        while(f!=null&&f.next!=null){
+            s=s.next;
+            f=f.next.next;
+            if(s==f) break;
+        }
+
+        if(f==null||f.next==null) return null;
+        while(head!=s){
+            head=head.next;
+            s=s.next;
+        }
+        return head;
+    }
+}
+
+// 143
+public class Solution {
+    public void reorderList(ListNode head) {
+        if(head==null||head.next==null) return;
+        ListNode s=head,f=head;
+        while(f!=null&&f.next!=null){
+            s=s.next;
+            f=f.next.next;
+        }
+
+        ListNode prev=null,curr=s.next,next;
+        s.next=null;
+
+        while(curr!=null){
+            next=curr.next;
+            curr.next=prev;
+            prev=curr;
+            curr=next;
+        }
+
+        ListNode h1=head,h2=prev,n1,n2;
+
+        while(h2!=null){
+            n1=h1.next;
+            n2=h2.next;
+            h1.next=h2;
+            h2.next=n1;
+            h1=n1;
+            h2=n2;
+        }
+
+    }
+}
+
+// 144
+public class Solution {
+    private List<Integer> ret = new ArrayList<>();
+    public List<Integer> preorderTraversal(TreeNode root) {
+        help(root);
+        return ret;
+    }
+
+    void help(TreeNode node){
+        if(node==null) return;
+        ret.add(node.val);
+        help(node.left);
+        help(node.right);
+    }
+}
+
+// 147
+public class Solution {
+    public ListNode insertionSortList(ListNode head) {
+        if(head==null||head.next==null) return head;
+        ListNode ret = new ListNode(0),curr=head,prev,next;
+        ret.next=head;
+        while(curr.next!=null){
+            next=curr.next;
+            if(curr.val>next.val){
+                prev=ret;
+                while(prev.next.val<=next.val){
+                    prev=prev.next;
+                }
+                curr.next=next.next;
+                next.next=prev.next;
+                prev.next=next;
+            }
+            else{
+                curr=curr.next;
+            }
+        }
+        return ret.next;
+    }
+}
+
+// 151
+public class Solution {
+    public String reverseWords(String s) {
+        if(s==null||s.length()==0) return s;
+        String[] arr = s.trim().split("\\s+");
+        if(arr.length==0) return "";
+        StringBuilder ret = new StringBuilder();
+        for(int i=arr.length-1;i>=0;i--){
+            ret.append(arr[i]+" ");
+        }
+        ret.deleteCharAt(ret.length()-1);
+        return ret.toString();
     }
 }
 
