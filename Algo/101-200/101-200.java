@@ -667,6 +667,32 @@ public class Solution {
     }
 }
 
+// 152
+public class Solution {
+    public int maxProduct(int[] nums) {
+        int max=1,min=1,ret = nums[0];
+        for(int i:nums){
+            int tmax = Math.max(max*i,min*i), tmin = Math.min(max*i,min*i);
+            max = Math.max(tmax,i);
+            min = Math.min(tmin,i);
+            ret = Math.max(ret,max);
+        }
+        return ret;
+    }
+}
+
+// 153
+public class Solution {
+    public int findMin(int[] nums) {
+        return help(nums,0,nums.length);
+    }
+
+    int help(int[] nums,int start, int end){
+        if(nums[start]<=nums[end-1]) return nums[start];
+        return Math.min(help(nums,0,(start+end)/2),help(nums,(start+end)/2,end));
+    }
+}
+
 // 155
 public class MinStack {
 
@@ -740,6 +766,16 @@ public class Solution {
     }
 }
 
+ // 162
+ public class Solution {
+    public int findPeakElement(int[] nums) {
+        for(int i=0;i<nums.length;i++){
+            if((i==0||nums[i]>nums[i-1])&&(i==nums.length-1||nums[i]>nums[i+1])) return i;
+        }
+        return -1;
+    }
+}
+
 // 165
 public class Solution {
     int i=0,j=0;
@@ -772,6 +808,49 @@ public class Solution {
             sum+=c-48;
         }
         return sum;
+    }
+}
+
+// 166
+public class Solution {
+    public String fractionToDecimal(int numerator, int denominator) {
+        return help((long)numerator,(long)denominator);
+    }
+
+    public String help(long numerator, long denominator){
+        if(numerator<0&&denominator>0||numerator>0&&denominator<0) return "-"+help(-numerator,denominator);
+        long r = numerator%denominator;
+        StringBuilder str = new StringBuilder();
+        str.append(numerator/denominator);
+        if(r==0) return str.toString();
+        str.append(".");
+        Map<Long,Integer> map = new HashMap<>();
+        while(r!=0&&!map.containsKey(r)){
+            map.put(r,str.length());
+            str.append(r*10/denominator);
+            r=r*10%denominator;
+        }
+        if(r!=0) {str.insert((int)map.get(r),'(');str.append(')');}
+        return str.toString();
+    }
+}
+
+// 167
+public class Solution {
+    public int[] twoSum(int[] numbers, int target) {
+        int[] ret = {-1,-1};
+        int i=0,j=numbers.length-1;
+        while(i<j){
+            if(numbers[i]+numbers[j]>target)  j--;
+            else if(numbers[i]+numbers[j]<target) i++;
+            else {
+                ret[0]=i+1;
+                ret[1]=j+1;
+                return ret;
+            }
+        }
+        return ret;
+
     }
 }
 
@@ -812,7 +891,7 @@ public class Solution {
     }
 }
 
-//172
+// 172
 public class Solution {
     public int trailingZeroes(int n) {
         int m=0;
@@ -821,6 +900,37 @@ public class Solution {
             m+=n;
         }
         return m;
+    }
+}
+
+// 173
+public class BSTIterator {
+    private Stack<TreeNode> cache = new Stack<>();
+
+    public BSTIterator(TreeNode root) {
+        while(root!=null) {
+            cache.push(root);
+            root=root.left;
+        }
+    }
+
+    /** @return whether we have a next smallest number */
+    public boolean hasNext() {
+        return !cache.empty();
+    }
+
+    /** @return the next smallest number */
+    public int next() {
+        TreeNode ret = cache.pop(),tmp;
+        if(ret.right!=null)
+        {
+            tmp = ret.right;
+            while(tmp!=null){
+                cache.push(tmp);
+                tmp=tmp.left;
+            }
+        }
+        return ret.val;
     }
 }
 
@@ -873,5 +983,83 @@ public class Solution {
             else a=b;
         }
         return b;
+    }
+}
+
+// 199
+public class Solution {
+    private List<Integer> ret = new ArrayList<>();
+    private Deque<TreeNode> deque =  new LinkedList<>();
+
+    public List<Integer> rightSideView(TreeNode root) {
+        if(root!=null){
+            deque.offerLast(root);
+            TreeNode last = root;
+            int lv = 0;
+            while(!deque.isEmpty()){
+                TreeNode node = deque.pollFirst();
+                if(node.left!=null) deque.offerLast(node.left);
+                if(node.right!=null) deque.offerLast(node.right);
+                if(node==last){
+                    lv++;
+                    last = deque.peekLast();
+                }
+                if(ret.size()<lv) ret.add(node.val);
+
+            }
+        }
+        return ret;
+    }
+}
+
+// 200
+public class Solution {
+    private boolean[][] used;
+    private char[][] grid;
+    private int m,n;
+    private Queue<Integer> queue = new LinkedList<>();
+
+    public int numIslands(char[][] grid) {
+        this.m=grid.length;
+        if(m==0) return 0;
+        this.n=grid[0].length;
+        this.grid = grid;
+        this.used = new boolean[m][n];
+
+        int ret = 0;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(valid(i,j)){
+                    ret++;
+                    bfs(i,j);
+                }
+            }
+        }
+        return ret;
+    }
+
+    void bfs(int xx, int yy){
+        offer(xx,yy);
+        used[xx][yy]=true;
+        while(!queue.isEmpty()){
+            int p=queue.poll();
+            int x = p/n, y = p%n;
+            offer(x-1,y);
+            offer(x+1,y);
+            offer(x,y-1);
+            offer(x,y+1);
+        }
+    }
+
+    boolean valid(int x,int y){
+        return x>=0&&y>=0&&x<m&&y<n&&!used[x][y]&&grid[x][y]=='1';
+    }
+
+    void offer(int x, int y){
+        if(valid(x,y)){
+            int p = x*n+y;
+            used[x][y]=true;
+            queue.offer(p);
+        }
     }
 }
