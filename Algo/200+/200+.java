@@ -80,6 +80,139 @@ public class Solution {
     }
 }
 
+// 207
+public class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[] inDegree = new int[numCourses];
+        int[][] matrix = new int[numCourses][numCourses];
+
+        for(int i=0;i<prerequisites.length;i++){
+            int from = prerequisites[i][0], to = prerequisites[i][1];
+            if(matrix[from][to]==0) inDegree[to]++;
+            matrix[from][to] = 1;
+        }
+
+        Queue<Integer> queue = new LinkedList<>();
+        for(int i=0;i<numCourses;i++){
+            if(inDegree[i]==0) queue.offer(i);
+        }
+
+        int count = 0;
+        while(!queue.isEmpty()){
+            int p = queue.poll();
+            count++;
+            for(int next=0;next<numCourses;next++){
+                if(matrix[p][next]==1){
+                    if(--inDegree[next]==0) queue.offer(next);
+                }
+            }
+        }
+
+        return count==numCourses;
+    }
+}
+
+// 208
+class TrieNode {
+    // Initialize your data structure here.
+    char c;
+    boolean aWordHere = false;
+    TrieNode[] nexts = new TrieNode[26];
+
+    public TrieNode() {
+        c = '\0';
+    }
+    public TrieNode(char c) {
+        this.c = c;
+    }
+}
+
+public class Trie {
+    private TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    // Inserts a word into the trie.
+    public void insert(String word) {
+        TrieNode curr = root;
+        for(char c:word.toCharArray()){
+            if(curr.nexts[c-'a']==null) curr.nexts[c-'a']=new TrieNode(c);
+            curr=curr.nexts[c-'a'];
+        }
+        curr.aWordHere=true;
+    }
+
+    // Returns if the word is in the trie.
+    public boolean search(String word) {
+        TrieNode curr = root;
+        for(char c:word.toCharArray()){
+            curr=curr.nexts[c-'a'];
+            if(curr==null) return false;
+        }
+        return curr.aWordHere;
+    }
+
+    // Returns if there is any word in the trie
+    // that starts with the given prefix.
+    public boolean startsWith(String prefix) {
+        TrieNode curr = root;
+        for(char c:prefix.toCharArray()){
+            curr=curr.nexts[c-'a'];
+            if(curr==null) return false;
+        }
+        return true;
+    }
+}
+
+// 209
+public class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        int begin = 0, sum = 0, minLen = nums.length+1;
+        for(int i=0;i<nums.length;i++){
+            sum+=nums[i];
+            while(sum>=s){
+                int len = i+1-begin;
+                if(minLen>len) minLen=len;
+                sum-=nums[begin++];
+            }
+        }
+        return minLen>nums.length?0:minLen;
+    }
+}
+
+//210
+public class Solution {
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+        int[] ret = new int[numCourses];
+        int[] inDegree = new int[numCourses];
+        int[][] matrix = new int[numCourses][numCourses];
+        for(int i=0;i<prerequisites.length;i++){
+            int to = prerequisites[i][0], from = prerequisites[i][1];
+            if(matrix[from][to]++==0) inDegree[to]++;
+        }
+
+        Queue<Integer> queue = new LinkedList<>();
+
+        for(int i = 0;i<numCourses;i++){
+            if(inDegree[i]==0) queue.offer(i);
+        }
+
+        int count=0;
+        while(!queue.isEmpty()){
+            int p = queue.poll();
+            ret[count++]=p;
+            for(int to = 0; to<numCourses;to++){
+                if(matrix[p][to]>0){
+                    if(--inDegree[to]==0) queue.offer(to);
+                }
+            }
+        }
+        return count==numCourses?ret:new int[0];
+    }
+}
+
 //217
 public class Solution {
     public boolean containsDuplicate(int[] nums) {

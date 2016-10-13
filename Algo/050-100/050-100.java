@@ -135,35 +135,32 @@ public class Solution {
 public class Solution {
     public List<Interval> merge(List<Interval> intervals) {
         List<Interval> ret = new ArrayList<>();
-        if(intervals.size()==0) return ret;
-        for(Interval tmp:intervals){
-            Interval added = null;
-            if (ret.size()==0) {
-                ret.add(tmp);
-                continue;
-            }
-            while(true){
-                boolean merged=false;
-                for(Interval curr:ret){
-                    if(mergable(curr,tmp)||mergable(tmp,curr)){
-                        int start=curr.start<tmp.start?curr.start:tmp.start;
-                        int end=curr.end>tmp.end?curr.end:tmp.end;
-                        ret.remove(curr);
-                        tmp = new Interval(start,end);
-                        merged=true;
-                        break;
+
+        for(Interval x:intervals){
+            if(ret.size() == 0) ret.add(x);
+            else{
+                boolean iter=true;
+                while(iter){
+                    iter=false;
+                    for(Interval y:ret){
+                        if(mergable(x,y)||mergable(y,x)){
+                            int start = x.start>y.start?y.start:x.start;
+                            int end = x.end>y.end?x.end:y.end;
+                            ret.remove(y);
+                            x = new Interval(start,end);
+                            iter=true;
+                            break;
+                        }
                     }
                 }
-                if(!merged) break;
+                ret.add(x);
             }
-            ret.add(tmp);
         }
         return ret;
     }
     boolean mergable(Interval a, Interval b){
         return a.start<=b.start&&b.start<=a.end||a.start<=b.end&&b.end<=a.end;
     }
-
 }
 
 //057
