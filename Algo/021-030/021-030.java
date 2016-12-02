@@ -177,3 +177,38 @@ public class Solution {
         return (int)(pos?(i<Integer.MAX_VALUE?i:Integer.MAX_VALUE):(-i>Integer.MIN_VALUE?-i:Integer.MIN_VALUE));
     }
 }
+
+ //030
+ public class Solution {
+    public List<Integer> findSubstring(String s, String[] words) {
+        List<Integer> ret =  new ArrayList<>();
+        if(s.length()==0||words.length==0) return ret;
+        int wlen = words[0].length(),winLen = wlen*words.length;
+        Map<String,Integer> map = new HashMap<>(), counter = new HashMap<>();
+        for(String word:words) map.put(word,map.getOrDefault(word,0)+1);
+        for(int init=0;init<wlen;init++){
+            counter.clear();
+            for(int i = init,start = i,count=0;i+wlen<=s.length()&&start+winLen<=s.length();i+=wlen){
+                String sub = s.substring(i,i+wlen);
+                if(!map.containsKey(sub)){
+                    start=i+wlen;
+                    count=0;
+                    counter.clear();
+                } else{
+                    if(i==start+winLen){
+                        String first = s.substring(start,start+wlen);
+                        int fcount = counter.get(first);
+                        start+=wlen;
+                        counter.put(first,fcount-1);
+                        if(fcount>map.get(first)) --count;
+                    }
+                    counter.put(sub,counter.getOrDefault(sub,0)+1);
+                    if (counter.get(sub)>map.get(sub)) ++count;
+                    if(count==0&&i+wlen==start+winLen) ret.add(start);
+                }
+
+            }
+        }
+        return ret;
+    }
+}

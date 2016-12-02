@@ -330,6 +330,15 @@ public class Solution {
     }
 }
 
+// 065
+public class Solution {
+    public boolean isNumber(String s) {
+        if (s.trim().length()==0) return false;
+        String regexp = "^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)(e(\\+|-)?[0-9]+)?$";
+        return s.trim().replaceAll(regexp,"").length()==0;
+    }
+}
+
 // 066
 public class Solution {
     public int[] plusOne(int[] digits) {
@@ -340,6 +349,82 @@ public class Solution {
         int[] ret = new int[digits.length+1];
         ret[0]=1;
         return ret;
+    }
+}
+
+// 067
+public class Solution {
+    public String addBinary(String a, String b) {
+        if(a.length()<b.length()) return addBinary(b,a);
+        StringBuilder ret = new StringBuilder();
+        int x = a.length()-1,y=b.length()-1;
+        int one = 0;
+        while(y>=0){
+            int res = a.charAt(x--) - '0' + (b.charAt(y--)-'0') + one;
+            ret.append(res%2);
+            one = res/2;
+        }
+        while(x>=0){
+            int res = a.charAt(x--) - '0' + one;
+            ret.append(res%2);
+            one=res/2;
+        }
+        if (one>0) ret.append(1);
+        return ret.reverse().toString();
+    }
+}
+
+// 068
+public class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> ret = new ArrayList<>();
+        int start=0,end=0,occupied=0,length=0;
+        for(;end<words.length;end++){
+            int l = words[end].length();
+            if(occupied+l>maxWidth){
+                // add this l will overflow so this l is the next start
+                ret.add(packWords(Arrays.copyOfRange(words,start,end),maxWidth,length));
+                start=end;
+                occupied=0;
+                length=0;
+            }
+            occupied+=l+1;
+            length+=l;
+        }
+        ret.add(packWordsNoEven(Arrays.copyOfRange(words,start,end),maxWidth));
+        return ret;
+    }
+
+    String packWords(String[] words, int maxWidth, int length){
+        StringBuilder ret = new StringBuilder();
+        if(words.length==1){
+            ret.append(words[0]);
+            int times = maxWidth-length;
+            for(int i=0;i<times;i++) ret.append(' ');
+            return ret.toString();
+        }
+        int spaceM = words.length-1,spaceN = maxWidth-length;
+        int gap = spaceN/spaceM;
+        int i;
+        for(i=0;i<spaceM;i++){
+            ret.append(words[i]);
+            int times = gap + (i<spaceN%spaceM?1:0);
+            for(int j=0;j<times;j++) ret.append(' ');
+        }
+        ret.append(words[i]);
+        return ret.toString();
+    }
+
+    String packWordsNoEven(String[] words,int maxWidth){
+        StringBuilder ret = new StringBuilder();
+        int length = 0;
+        for(String word:words){
+            ret.append(word+" ");
+            length+=word.length()+1;
+        }
+        ret.deleteCharAt(--length);
+        while(length++<maxWidth) ret.append(" ");
+        return ret.toString();
     }
 }
 
@@ -356,7 +441,7 @@ public class Solution {
     }
 }
 
-//071
+// 071
 public class Solution {
     public String simplifyPath(String path) {
         Stack<String> s = new Stack<>(),ss=new Stack<>();
@@ -374,6 +459,22 @@ public class Solution {
         while(!ss.empty()) ret.append("/"+ss.pop());
         if(ret.length()==0) ret.append("/");
         return ret.toString();
+    }
+}
+
+// 072
+public class Solution {
+    public int minDistance(String word1, String word2) {
+        int[][] dp = new int[word1.length()+1][word2.length()+1];
+        for(int i=0;i<word1.length();i++) dp[i+1][0]=i+1;
+        for(int i=0;i<word2.length();i++) dp[0][i+1]=i+1;
+        for(int i=0;i<word1.length();i++){
+            for(int j=0;j<word2.length();j++){
+                if(word1.charAt(i)==word2.charAt(j)) dp[i+1][j+1]=dp[i][j];
+                else dp[i+1][j+1]=Math.min(dp[i][j],Math.min(dp[i][j+1],dp[i+1][j]))+1;
+            }
+        }
+        return dp[word1.length()][word2.length()];
     }
 }
 
@@ -423,7 +524,55 @@ public class Solution {
     }
 }
 
-//077
+// 076
+public class Solution {
+    public String minWindow(String s, String t) {
+        Map<Character,Integer> map = new HashMap<>();
+        int k=0;
+        int minL = s.length()+1,minStart=0,minEnd=0;
+        for(char c:t.toCharArray()){
+            if (!map.containsKey(c)){
+                map.put(c,1);
+                k++;
+            }
+            else map.put(c,map.get(c)+1);
+        }
+        for(int start=0, end=0;start<s.length();start++){
+            // find enough chars
+            for(;k>0 && end<s.length();end++){
+                char c = s.charAt(end);
+                if(map.containsKey(c)){
+                    int count = map.get(c);
+                    map.put(c,count-1);
+                    if(count==1){
+                        k--;
+                    }
+                }
+            }
+            if(k>0) break;
+            // refine start
+            for(;start<s.length();start++){
+                char c = s.charAt(start);
+                if(map.containsKey(c)){
+                    int count = map.get(c);
+                    map.put(c,count+1);
+                    if(count==0) {
+                        k++;
+                        break;
+                    }
+                }
+            }
+            if(minL>end-start){
+                minL=end-start;
+                minStart=start;
+                minEnd=end;
+            }
+        }
+        return s.substring(minStart,minEnd);
+    }
+}
+
+// 077
 public class Solution {
     private List<List<Integer>> ret = new ArrayList<>();
     private List<Integer> list = new ArrayList<>();
