@@ -744,7 +744,46 @@ public class Solution {
         return head;
     }
 
-//086
+// 084
+public class Solution {
+    public int largestRectangleArea(int[] heights) {
+        int ret = 0;
+        Stack<Integer> s = new Stack<>();
+        for(int i=0;i<=heights.length;i++){
+            int h = (i==heights.length?0:heights[i]);
+            while(!s.empty()&&h<heights[s.peek()]){
+                ret = Math.max(ret, heights[s.pop()] * (s.empty()?i:i-1-s.peek()) );
+            }
+            if(i+2>heights.length||heights[i]!=heights[i+1]) s.push(i);
+        }
+        return ret;
+    }
+}
+
+// 085
+public class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        int m = matrix.length;
+        if (m==0) return 0;
+        int n = matrix[0].length, ret = 0;
+        int[] h = new int[n+1];
+        for(int row = 0; row <m ; row++){
+            Stack<Integer> s = new Stack<>();
+            for(int i = 0;i<=n;i++){
+                h[i] = (i!=n&&matrix[row][i] == '1'?h[i]+1:0);
+                int t = (i==n?0:h[i]);
+                while(!s.empty()&&h[s.peek()]>t){
+                    int p = s.pop();
+                    ret = Math.max(ret,h[p] * (s.empty()?i:i-1-s.peek()));
+                }
+                s.push(i);
+            }
+        }
+        return ret;
+    }
+}
+
+// 086
 public class Solution {
     public ListNode partition(ListNode head, int x) {
         ListNode ret=new ListNode(0),curr=ret,last,prev;
