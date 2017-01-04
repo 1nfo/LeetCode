@@ -812,6 +812,41 @@ public class Solution {
     }
 }
 
+// 087
+public class Solution {
+    private int len;
+    private boolean[][][] dp;
+    private boolean[][][] visited;
+    private String s1,s2;
+
+    public boolean isScramble(String s1, String s2) {
+        this.s1=s1;
+        this.s2=s2;
+        this.len = s1.length();
+        this.dp = new boolean[len][len][len+1];
+        this.visited = new boolean[len][len][len+1];
+        return  help(0,0,len);
+    }
+
+    boolean help(int i,int j,int l){
+        if(!visited[i][j][l]) {
+            boolean res = false;
+            if(l==0) res = true;
+            else if(l==1){
+                res = s1.charAt(i)==s2.charAt(j);
+            }
+            else{
+                for(int t = 1,s=l-1;t<l&&res==false;t++,s--){
+                    res = help(i,j,t) && help(i+t,j+t,s) || help(i,j+s,t) && help(i+t,j,s);
+                }
+            }
+            dp[i][j][l] = res;
+            visited[i][j][l] = true;
+        }
+        return dp[i][j][l];
+    }
+}
+
 // 088
 public class Solution {
     public void merge(int[] nums1, int m, int[] nums2, int n) {
@@ -972,6 +1007,26 @@ public class Solution {
             }
         }
         return ret[n];
+    }
+}
+
+// 097
+public class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if(s1.length()+s2.length()!=s3.length()) return false;
+        boolean[][] dp = new boolean[s1.length()+1][s2.length()+1];
+        dp[0][0] = true;
+        for(int t = 1;t <= s1.length(); t++){dp[t][0] = dp[t-1][0] & (s1.charAt(t-1) == s3.charAt(t-1));}
+        for(int t = 1;t <= s2.length(); t++){dp[0][t] = dp[0][t-1] & (s2.charAt(t-1) == s3.charAt(t-1));}
+        for(int t = 2;t <= s3.length(); t++){
+            for(int i=1,j=t-i;i<t;i++,j--){
+                if(i<=s1.length()&&j<=s2.length()){
+                    dp[i][j] = dp[i-1][j]&&s1.charAt(i-1)==s3.charAt(t-1)
+                             ||dp[i][j-1]&&s2.charAt(j-1)==s3.charAt(t-1);
+                }
+            }
+        }
+        return dp[s1.length()][s2.length()];
     }
 }
 
