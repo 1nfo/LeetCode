@@ -252,19 +252,103 @@ public class Solution {
 
 // 116
 public class Solution {
-    List<TreeLinkNode> prev = new ArrayList<>();
     public void connect(TreeLinkNode root) {
-        help(root,0);
+        help(root);
     }
-    void help(TreeLinkNode node, int level){
+    void help(TreeLinkNode node){
         if(node == null) return;
-        if(prev.size()==level) prev.add(node);
-        else{
-            prev.get(level).next=node;
-            prev.set(level,node);
+        if(node.left!=null)node.left.next=node.right;
+        if(node.right!=null&&node.next!=null)node.right.next=node.next.left;
+        help(node.left);
+        help(node.right);
+    }
+}
+// 116 _ 2
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        while(root!=null){
+            TreeLinkNode curr = root;
+            while(curr!=null){
+                if(curr.left!=null){
+                    curr.left.next=curr.right;
+                    if (curr.next!=null) curr.right.next=curr.next.left;
+                }
+                curr=curr.next;
+            }
+            root=root.left;
         }
-        help(node.left,level+1);
-        help(node.right,level+1);
+    }
+}
+// 117 _ forward linking
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        while(root!=null){
+            TreeLinkNode curr=root,start=null;
+            while(curr!=null){
+                if(curr.left!=null){
+                    if(start==null) start=curr.left;
+                    if(curr.right!=null) curr.left.next=curr.right;
+                    else linkNext(curr.left,curr.next);
+                }
+                if(curr.right!=null){
+                    if(start==null) start=curr.right;
+                    linkNext(curr.right,curr.next);
+                }
+                curr=curr.next;
+            }
+            root=start;
+        }
+    }
+    void linkNext(TreeLinkNode prev,TreeLinkNode next){
+        while(next!=null){
+            if(next.left!=null){
+                prev.next=next.left;
+                break;
+            }
+            else if(next.right!=null){
+                prev.next=next.right;
+                break;
+            }
+            next=next.next;
+        }
+    }
+}
+
+// 117 _ 2 _ backward linking
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        while(root!=null){
+            TreeLinkNode curr=root,start=null,prev=null;
+            while(curr!=null){
+                if(curr.left!=null){
+                    if(prev==null) start=curr.left;
+                    else prev.next=curr.left;
+                    prev=curr.left;
+                }
+                if(curr.right!=null){
+                    if(prev==null) start=curr.right;
+                    else prev.next=curr.right;
+                    prev=curr.right;
+                }
+                curr = curr.next;
+            }
+            root=start;
+        }
+    }
+}
+// 117 _ 3 _ backward linking with default head
+public class Solution {
+    public void connect(TreeLinkNode root) {
+        TreeLinkNode curr=root;
+        while(curr!=null){
+            TreeLinkNode start=new TreeLinkNode(0),prev=start;
+            while(curr!=null){
+                if(curr.left!=null) prev.next = prev = curr.left;
+                if(curr.right!=null) prev.next = prev= curr.right;
+                curr = curr.next;
+            }
+            curr=start.next;
+        }
     }
 }
 
@@ -349,6 +433,41 @@ public class Solution {
     }
 }
 
+// 123
+public class Solution {
+    public int maxProfit(int[] prices) {
+        if(prices.length==0) return 0;
+        int b1=prices[0],p1=0,b2=b1,p2=0;
+        for(int price:prices){
+            b1=Math.min(b1,price);
+            p1=Math.max(p1,price-b1);
+            b2=Math.min(b2,price-p1);
+            p2=Math.max(p2,price-b2);
+        }
+        return p2;
+    }
+}
+
+// 124
+public class Solution {
+    int max = Integer.MIN_VALUE;
+    public int maxPathSum(TreeNode root) {
+        int ret = help(root);
+        return Math.max(max,ret);
+    }
+    int help(TreeNode root){
+        if(root==null) return Integer.MIN_VALUE;
+        int c = root.val;
+        int a = help(root.left), b = help(root.right), m = Math.max(a,b);
+        if(c>=0||c+m>0||c>m) {
+            this.max = Math.max(this.max,Math.max(0,a)+Math.max(0,b)+c);
+            return Math.max(0,m)+c;
+        }
+        this.max = Math.max(this.max,m);
+        return Integer.MIN_VALUE;
+    }
+}
+
 // 125
 public class Solution {
     public boolean isPalindrome(String s) {
@@ -399,6 +518,24 @@ public class Solution {
             ret++;
         }
         return 0;
+    }
+}
+
+// 128
+public class Solution {
+    public int longestConsecutive(int[] nums) {
+        int ret = 0;
+        Map<Integer, Integer> m = new HashMap<>();
+        for(int i : nums){
+            if(m.containsKey(i)) continue;
+            int a = (m.containsKey(i-1)?m.get(i-1):0), b = (m.containsKey(i+1)?m.get(i+1):0);
+            int t = a+b+1;
+            m.put(i-a,t);
+            m.put(i+b,t);
+            m.put(i,t);
+            ret = Math.max(ret,t);
+        }
+        return ret;
     }
 }
 
@@ -520,6 +657,29 @@ public class Solution {
     }
 }
 
+// 135
+public class Solution {
+    public int candy(int[] ratings) {
+        if(ratings.length<2) return ratings.length;
+        int ret=0;
+        int[] c = new int[ratings.length];
+        Arrays.fill(c,1);
+        for(int i=1;i<c.length;i++) if(ratings[i]>ratings[i-1]) c[i]=c[i-1]+1;
+        for(int i=c.length-2;i>=0;i--) if(ratings[i]>ratings[i+1]&&c[i]<=c[i+1]) c[i]=c[i+1]+1;
+        for(int i:c) ret+=i;
+        return ret;
+    }
+}
+
+// 136
+public class Solution {
+    public int singleNumber(int[] nums) {
+        int ret = 0;
+        for(int i:nums) ret^=i;
+        return ret;
+    }
+}
+
 // 137
 public class Solution {
     public int singleNumber(int[] nums) {
@@ -530,6 +690,29 @@ public class Solution {
             b = (~ta)&(b^c);
         }
         return a|b;
+    }
+}
+
+// 138
+public class Solution {
+    public RandomListNode copyRandomList(RandomListNode head) {
+        RandomListNode ret = new RandomListNode(0),op=head,cp=ret;
+        Map<RandomListNode,RandomListNode> m = new HashMap<>();
+        while(op!=null){
+            cp.next = new RandomListNode(op.label);
+            cp=cp.next;
+            m.put(op,cp);
+            op=op.next;
+        }
+        op=head;
+        cp=ret.next;
+        while(op!=null){
+            cp.random = m.get(op.random);
+            cp=cp.next;
+            op=op.next;
+        }
+
+        return ret.next;
     }
 }
 
@@ -555,6 +738,32 @@ public class Solution {
         }
 
         return dp[s.length()];
+    }
+}
+
+// 140
+public class Solution {
+    private Map<String,List<String>> m = new HashMap<>();
+    private List<String> wordDict;
+
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        this.wordDict = wordDict;
+        return help(s);
+    }
+
+    List<String> help(String s){
+        if(m.containsKey(s)) return m.get(s);
+        List<String> ret = new LinkedList<>();
+        if(s.length()==0){
+            ret.add("");
+            return ret;
+        }
+        for(String word:wordDict){
+            int wLen = word.length();
+            if(s.startsWith(word)) for(String sub:help(s.substring(wLen))) ret.add(word+(sub.isEmpty()?"":" "+sub));
+        }
+        m.put(s,ret);
+        return ret;
     }
 }
 

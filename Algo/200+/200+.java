@@ -510,3 +510,46 @@ public class Solution {
         return a+"A"+b+"B";
     }
 }
+
+// 382
+public class Solution {
+    private ListNode head;
+    private Random r = new Random();
+
+    /** @param head The linked list's head.
+        Note that the head is guaranteed to be not null, so it contains at least one node. */
+    public Solution(ListNode head) {
+        this.head=head;
+    }
+
+    /** Returns a random node's value. */
+    public int getRandom() {
+        ListNode current = head,chosen=null;;
+        int count = 0;
+        while(current!=null){
+            if(r.nextInt(++count)==0) chosen=current;
+            current = current.next;
+        }
+        return chosen.val;
+    }
+}
+
+// 398
+public class Solution {
+    private int[] nums;
+    private Random r = new Random();
+
+    public Solution(int[] nums) {
+        this.nums = nums;
+    }
+
+    public int pick(int target) {
+        int index=-1;
+        for(int n=0,i=0;i<nums.length;i++){
+            if(nums[i]==target){
+                index = (r.nextInt(++n)==0?i:index);
+            }
+        }
+        return index;
+    }
+}

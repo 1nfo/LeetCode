@@ -15,21 +15,18 @@ public class Solution {
 // 002
 public class Solution {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        int sum=l1.val+l2.val,one=sum/10;
-        ListNode head,curr;
-        head=curr=new ListNode(sum%10);
-        while(null!=l1.next || null!=l2.next){
-            if (null==l1.next) l1.next=new ListNode(0);
-            if (null==l2.next) l2.next=new ListNode(0);
-            l1=l1.next;
-            l2=l2.next;
-            sum=l1.val+l2.val+one;
-            one=sum/10;
-            curr.next=new ListNode(sum%10);
-            curr=curr.next;
+        ListNode ret = new ListNode(0),node=ret;
+        int one = 0;
+        while(l1!=null || l2!=null){
+            int res = (l1!=null?l1.val:0)+(l2!=null?l2.val:0)+one;
+            node.next = new ListNode(res%10);
+            one = res/10;
+            node = node.next;
+            l1=(l1!=null?l1.next:null);
+            l2=(l2!=null?l2.next:null);
         }
-        if (one>0) curr.next=new ListNode(one);
-        return head;
+        if(one!=0) node.next = new ListNode(one);
+        return ret.next;
     }
 }
 
