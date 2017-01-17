@@ -69,25 +69,25 @@ public class Solution {
 
 // 005
 public class Solution {
+    private int start,mLen;
+    private String s;
     public String longestPalindrome(String s) {
-        int center=0,length=0,r=0,lenS=s.length();
-        for (int i=0;i<lenS;i++){
-            int tempC=((lenS-1)>>1)+(((i&1)==1)?1:-1)*((i+1)>>1);
-            if (tempC-((length-1)>>1)<0 || tempC+(length>>1)>=lenS) break;
-            r=0;
-            while (tempC+r+1<lenS && tempC-r-1>=0 && s.charAt(tempC-r-1)==s.charAt(tempC+r+1)) r++;
-            if (length<(r<<1)+1) {
-                length=(r<<1)+1;
-                center=tempC;
-            }
-            r=0;
-            while (tempC+r+1<lenS && tempC-r>=0 && s.charAt(tempC-r)==s.charAt(tempC+r+1)) r++;
-            if(length<(r<<1)){
-                length=(r<<1);
-                center=tempC;
-            }
+        this.s = s;
+        for (int i=0;i<s.length();i++){
+            help(i,i);
+            help(i,i+1);
         }
-        return s.substring(center-(length-1)/2,center+length/2+1);
+        return s.substring(start,start+mLen);
+    }
+
+    void help(int a, int b){
+        while(a>=0&&b<s.length()&&s.charAt(a)==s.charAt(b)){
+            a--;
+            b++;
+        }
+        if (b-a-1<=mLen) return;
+        this.start = a+1;
+        this.mLen = b-a-1;
     }
 }
 
