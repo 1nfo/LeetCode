@@ -13,10 +13,27 @@
 8. [String to Integer (atoi)](#n8)
 9. [Palindrome Number](#n9)
 10. [Regular Expression Matching](#n10)
+11. [Container With Most Water](#n11)
+12. [Integer to Roman](#n)
+13. [Roman to Integer](#n13)
+14. [Longest Common Prefix](#n14)
+15. [3Sum](#n15)
+16. [3Sum Closest](#n16)
+17. [Letter Combinations of a Phone Number](#n17)
+18. [4Sum](#n18)
+19. [Remove Nth Node From End of List](#n19)
+20. [Valid Parentheses](#n20)
+
 
 [Top](#top)
 
 ### By Category
+
+#### Two Sum:
+two pointers / Hashtable  
+find index, find number   
+one solution / all solution (duplicated or not)
+
 
 ---
 
@@ -441,7 +458,8 @@ public class Solution {
 Determine whether an integer is a palindrome. Do this without extra space.
 #### Thought
 #####  - Key Idea
-	return (reversed integer == original integer)
+	return (reversed integer == original integer); 
+
 #####  - Complexity 
 Time:  O(1)
 Space: O(1)
@@ -490,7 +508,6 @@ bool isMatch(const char *s, const char *p)
 	isMatch("ab", ".*") → true
 	isMatch("aab", "c*a*b") → true
 #### Thought
-#####  - Key word
 #####  - Key Idea
 DP(m,n) = f(char1[m],char2[n-1],char[n],DP(m,n-2),DP(m-1,n-1),Dp(m-1,n))  
 base case: match "" and "a\*b\*c\*..."
@@ -530,6 +547,345 @@ public class Solution {
 ```
 [Top](#top)
 
+## #11. Container With Most Water <a name="n11"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/container-with-most-water))
+###### TAG [Array] [Tow pointers]
+Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
+
+Note: You may not slant the container and n is at least 2.
+
+#### Thought
+#####  - Key Idea
+two pointers, when Height[a]<Height[b], if we b--, the area can not be enlarged.
+#####  - Complexity 
+Time:  O(n)  
+Space:  O(1)
+#####  - Boundary Conditions
+height.length<2
+#####  - Mistakes
+compared indexes instead of height[index]s
+#####  - Further Considerations
+Why this is an efficient way to search?
+#####  - Related Problems
+(H) Trapping Rain Water
+
+#### Solution
+```Java
+public class Solution {
+    public int maxArea(int[] height) {
+        if(height.length<2) return 0;
+        int i=0,j=height.length-1,ret=0;
+        while(i<j){
+            if(height[i]<height[j]) ret = Math.max(ret,(j-i)*height[i++]);
+            else ret = Math.max(ret,(j-i)*height[j--]);
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #12. Integer to Roman <a name="n12"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/integer-to-roman))
+###### TAG [Math] [String]
+Given an integer, convert it to a roman numeral.
+
+Input is guaranteed to be within the range from 1 to 3999.
+#### Thought
+#####  - Key Idea
+digit by digit
+#####  - Complexity 
+Time:  O(n)
+Space:  O(n)
+#####  - Boundary Conditions 
+9, 4, (6 7 8), 5, (1,2,3), 0
+#####  - Mistakes
+Reverse the sequence or not
+#####  - Further Considerations
+Efficiently using space and time
+#####  - Related Problems
+(E) Roman to Integer (H) Integer to English Words
+
+
+#### Solution
+```Java
+public class Solution {
+    public String intToRoman(int num) {
+        char[][] g = {{'I','V','X'},{'X','L','C'},{'C','D','M'},{'M','\0','\0'}};
+        StringBuilder sb = new StringBuilder();
+        int count=0;
+        while(num>0){
+            int r = num%10;
+            num /= 10;
+            if(r==9){
+                sb.append(g[count][2]);
+                r-=8;
+            }
+            else if(r==4){
+                sb.append(g[count][1]);
+                r-=3;
+            }
+            while(r%5>0){
+                sb.append(g[count][0]);
+                r--;
+            }
+            if(r==5){
+                sb.append(g[count][1]);
+                r-=5;
+            }
+            count++;
+        }
+        return sb.reverse().toString();
+    }
+}
+```
+[Top](#top)
+
+## #13. Roman to Integer <a name="n13"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/roman-to-integer))
+###### TAG [Math] [String]
+Given a roman numeral, convert it to an integer.
+
+Input is guaranteed to be within the range from 1 to 3999.
+#### Thought
+#####  - Key Idea
+all number decreasing but digits '4' and '9'
+#####  - Complexity 
+Time:  O(n)
+Space:  O(n)
+
+#####  - Related Problems
+ (M) Integer to Roman
+
+#### Solution
+```Java
+public class Solution {
+    public int romanToInt(String s) {
+        int ret = 0;
+        for(int i=0;i<s.length();i++){
+            int v = c2v(s.charAt(i));
+            int t = (i+1!=s.length()&&v<c2v(s.charAt(i+1)))?-1:1;
+            ret += t*v;
+        }
+        return ret;
+    }
+    
+    int c2v(char c){
+        switch (c){
+            case 'M':return 1000;
+            case 'D':return 500;
+            case 'C':return 100;
+            case 'L':return 50;
+            case 'X':return 10;
+            case 'V':return 5;
+            case 'I':return 1;
+            default:return 0;
+        }
+    }
+}
+```
+[Top](#top)
+
+## #14. Longest Common Prefix <a name="n14"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/longest-common-prefix))
+###### TAG [String]
+Write a function to find the longest common prefix string amongst an array of strings.
+#### Thought
+#####  - Key Idea
+two nested loops, break to the outer loop
+#####  - Complexity 
+Time:  O(n)  
+Space:  O(1)
+#####  - Boundary Conditions
+the last index p is exclusive
+
+
+
+#### Solution
+```Java
+public class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        if(strs.length==0) return "";
+        int p = 0;
+        while(p<strs[0].length()){
+            char c = strs[0].charAt(p);
+            for(int i=1;i<strs.length;i++){
+                String str = strs[i];
+                if(p==str.length()||c!=str.charAt(p)) return strs[0].substring(0,p);
+            }
+            p++;
+        }
+        return strs[0].substring(0,p);
+    }
+}
+```
+[Top](#top)
+
+## #15. 3Sum <a name="n15"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/3sum))
+###### TAG  [Array] [Two Pointers]
+
+Given an array S of n integers, are there elements a, b, c in S such that a + b + c = 0? Find all unique triplets in the array which gives the sum of zero.
+
+Note: The solution set must not contain duplicate triplets.
+
+For example, given array S = [-1, 0, 1, 2, -1, -4],
+
+A solution set is:
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+#### Thought
+#####  - Key word
+unique triplets / not contain duplicate triplets
+#####  - Key Idea
+sort, loop + two pointer
+#####  - Complexity 
+Time:  O(n^2)  
+Space:  O(1)
+#####  - Boundary Conditions
+length<3, sort first, two-pointer remove duplicated
+#####  - Mistakes
+how to remove duplicated, if find curr==prev then continue, **BUT** inner loop must check this condition when we find a+b+c==0, otherwise will break two-pointer search.
+#####  - Further Considerations
+duplicated or not, value or index, one or all solutions
+#####  - Related Problems
+(E) Two Sum, (M) 3Sum Closest, (M) 4Sum, (M) 3Sum Smaller
+
+
+#### Solution
+```Java
+public class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if (nums.length<3) return ret;
+        Arrays.sort(nums);
+        int smallest = nums[0] - 1;
+        for (int i = 0; i < nums.length; i++){
+            if (nums[i] != smallest) {
+                smallest = nums[i];
+                int l = i + 1, r = nums.length - 1, biggest = nums[nums.length - 1] + 1;
+                while (l < r) {
+                    if (nums[i] + nums[l] + nums[r] == 0){
+                        if (biggest != nums[r]) {
+                            ret.add(new ArrayList<>(Arrays.asList(nums[i], nums[l], nums[r])));
+                            biggest = nums[r];
+                        }
+                        r--;l++;
+                    }
+                    else if (nums[i] + nums[l] + nums[r] > 0) r--;
+                    else l++;
+                }
+            }
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #16. 3Sum Closest <a name="n16"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/3sum-closest))
+###### TAG [two pointers] [array]
+Given an array S of n integers, find three integers in S such that the sum is closest to a given number, target. Return the sum of the three integers. You may assume that each input would have exactly one solution.
+
+    For example, given array S = {-1 2 1 -4}, and target = 1.
+
+    The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+loop + two pointers
+#####  - Complexity 
+Time:  O(n^2)
+Space:  O(1)
+#####  - Boundary Conditions
+#####  - Mistakes
+sort first, out of index
+#####  - Further Considerations
+#####  - Related Problems
+(M) 3Sum, (M) 3Sum Smaller
+
+#### Solution
+```Java
+public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int ret = nums[0]+nums[1]+nums[2], prevDiff=target-ret;
+        for(int i=0;i<nums.length;i++){
+            int j=i+1,k=nums.length-1;
+            while(j<k){
+                int sum = nums[i]+nums[j]+nums[k], diff = target-sum;
+                if(sum>target) k--;
+                else if (sum<target) j++;
+                else return target;
+                if(diff*diff<prevDiff*prevDiff) {
+                    prevDiff=diff;
+                    ret=sum;
+                }
+            }
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #17. Letter Combinations of a Phone Number <a name="n17"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/letter-combinations-of-a-phone-number/))
+###### TAG [backtracking] [string]
+Given a digit string, return all possible letter combinations that the number could represent.
+
+A mapping of digit to letters (just like on the telephone buttons) is given below.
+
+	Input: Digit string "23"
+	Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+#### Thought
+#####  - Key Idea
+digit by digit. each iteration, use and replace the former result.
+#####  - Complexity 
+Time:  O(n^2)
+Space:  O(n^2)
+#####  - Boundary Conditions
+first loop needs an initial result "";  
+empty input
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(M) Generate Parentheses, (M) Combination Sum (E), Binary Watch
+
+#### Solution
+```Java
+public class Solution {
+    List<String> ret = new ArrayList<>();
+    char[][] map = {{'a','b','c'},{'d','e','f'},{'g','h','i'},{'j','k','l'},{'m','n','o'},{'p','q','r','s'},{'t','u','v'},{'w','x','y','z'}};
+    public List<String> letterCombinations(String digits) {
+        if(digits.length()==0) return ret;
+        ret.add("");
+        for(char digit:digits.toCharArray()){
+            List<String> tmp = new ArrayList<>();
+            for(char c:map[digit-'2']){
+                for(String str:ret){
+                    tmp.add(str+c);
+                }
+            }
+            ret=tmp;
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
 
 
 
@@ -554,3 +910,5 @@ Space:
 
 ```
 [Top](#top)
+
+
