@@ -886,6 +886,316 @@ public class Solution {
 ```
 [Top](#top)
 
+## #18. 4Sum <a name="n18"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/4sum/))
+###### TAG [Array] [Hash Table] [Two pointer]
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+loop * 2 + two pointers
+#####  - Complexity 
+Time:  O(n^3)
+Space:  O(1)
+#####  - Boundary Conditions
+#####  - Mistakes
+out of index
+#####  - Further Considerations
+Efficient improvement:
+
+1. use index to check duplicated value
+2. max\*4<target || min\*4>target
+
+#####  - Related Problems
+(E) Two Sum, (M) 3Sum, (M) 4Sum II
+
+#### Solution
+```Java
+public class Solution {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if(nums.length<4) return ret;
+        Arrays.sort(nums);
+        if(nums[nums.length-1]*4<target||nums[0]*4>target) return ret;
+        for(int i=0;i<nums.length-3;i++){
+            if(i>0&&nums[i-1]==nums[i]) continue;
+            for(int j=i+1,prevJ=nums[j]-1;j<nums.length-2;j++){
+                if(j>i+1&&nums[j-1]==nums[j]) continue;
+                int l=j+1,r=nums.length-1;
+                while(l<r){
+                    int sum = nums[i]+nums[j]+nums[l]+nums[r];
+                    if(sum>target) while(l<r&&nums[r]==nums[--r]) ;
+                    else if(sum<target) while(l<r&&nums[l]==nums[++l]);
+                    else{
+                            ret.add(new ArrayList(Arrays.asList(nums[i],nums[j],nums[l],nums[r])));
+                            while(l<r&&nums[r]==nums[--r]);
+                            while(l<r&&nums[l]==nums[++l]);
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #19 Remove Nth Node From End of List  <a name="n19"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/remove-nth-node-from-end-of-list/))
+###### TAG  [Linked List] [Two Pointers]
+
+Given a linked list, remove the nth node from the end of list and return its head.
+
+For example,
+
+	Given linked list: 1->2->3->4->5, and n = 2.
+	
+	After removing the second node from the end, the linked list becomes 1->2->3->5.
+Note:
+Given n will always be valid.
+Try to do this in one pass.
+#### Thought
+#####  - Key Idea
+two pointers, one move first, the other follows from(empty node, here serve as prev since curr is redundent) after n steps. Then when first reaches null, second is the node need to
+#####  - Complexity 
+Time:  O(n)
+Space:  O(1)
+#####  - Boundary Conditions
+empty node before head(in case head is null)
+#####  - Mistakes
+#####  - Further Considerations
+
+#### Solution
+```Java
+public class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode ret = new ListNode(0),prev=ret,ahead=head;
+        ret.next=head;
+        for(int i=0;i<n;i++){
+            ahead=ahead.next;
+        }
+        while(ahead!=null){
+            ahead=ahead.next;
+            prev=prev.next;
+        }
+        prev.next=prev.next.next;
+        return ret.next;
+    }
+}
+```
+[Top](#top)
+
+## #20. Valid Parentheses <a name="n20"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/valid-parentheses/))
+###### TAG [stack] [string]
+Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+#### Thought
+#####  - Key Idea
+#####  - Complexity 
+Time:  O(n)
+Space:  O(n)
+#####  - Boundary Conditions
+
+#####  - Mistakes
+condition: two sides
+#####  - Further Considerations
+#####  - Related Problems
+(M) Generate Parentheses, (H) Longest Valid Parentheses, (H) Remove Invalid Parentheses
+
+#### Solution
+```Java
+public class Solution {
+    public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        for(char c:s.toCharArray()){
+            if(c=='}'||c==']'||c==')'){
+                if(stack.isEmpty()) return false;
+                char last = stack.pop();
+                if(c=='}'&&last=='{'||c==']'&&last=='['||c==')'&&last=='('){
+                    continue;
+                }
+                else{return false;}
+            }
+            else stack.push(c);
+        }
+        return stack.isEmpty();
+    }
+}
+```
+[Top](#top)
+
+## #21. Merge Two Sorted Lists <a name="n21"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/merge-two-sorted-lists/))
+###### TAG 
+Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  n  
+Space:  1 or n
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+deep copy or not?
+#####  - Related Problems
+(H) Merge k Sorted Lists, (E) Merge Sorted Array, (M) Sort List, (M) Shortest Word Distance II
+
+#### Solution
+```Java
+public class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode ret = new ListNode(0),curr=ret;
+        while(l1!=null&&l2!=null){
+            if(l1.val>l2.val){
+                curr.next=new ListNode(l2.val);
+                curr=curr.next;
+                l2=l2.next;
+            }
+            else{
+                curr.next=new ListNode(l1.val);
+                curr=curr.next;
+                l1=l1.next;
+            }
+        }
+        while(l1!=null){
+            curr.next=new ListNode(l1.val);
+            curr=curr.next;
+            l1=l1.next;
+        }
+        while(l2!=null){
+            curr.next=new ListNode(l2.val);
+            curr=curr.next;
+            l2=l2.next;
+        }
+        return ret.next;
+    }
+}
+```
+[Top](#top)
+
+## # <a name="n22"></a>
+
+#### Problem Statement ([link]())
+###### TAG [String] [backtracking] 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+**dp**: ```dp(n) = ∑( "(" + (element in dp[i]) + ")" + (element in dp[n-1-i]))```  
+4 nested loops
+
+**backtracking**:
+try string+"(" and string+")" when they are valid to do so.
+#####  - Complexity 
+Time:  O(2^n)?  
+Space:  O(n^2)?
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(M) Letter Combinations of a Phone Number, (E) Valid Parentheses
+
+#### Solution
+##### DP
+```Java
+public class Solution {
+    public List<String> generateParenthesis(int n) {
+        Map<Integer,List<String>> dp = new HashMap<>();
+        dp.put(0,new ArrayList<>(Arrays.asList("")));
+        for(int i=0;i<n;i++){
+            List<String> list = new ArrayList<>();
+            for(int j=0;j<=i;j++){
+                for(String a:dp.get(j)){
+                    for(String b:dp.get(i-j)){
+                        list.add("("+a+")"+b);
+                    }
+                }
+            }
+            dp.put(i+1,list);
+        }
+        return dp.get(n);
+    }
+}
+```
+##### backtracking
+```Java
+public class Solution {
+    private List<String> ret = new ArrayList<>();
+    public List<String> generateParenthesis(int n) {
+        backtracking("",0,0,n);
+        return ret;
+    }
+    void backtracking(String attempt,int l,int r,int n){
+        if(r==n) ret.add(attempt);
+        else{
+            if(n>l) backtracking(attempt+"(",l+1,r,n);
+            if(l>r) backtracking(attempt+")",l,r+1,n);
+        }
+    }
+}
+```
+[Top](#top)
+
+## #23. Merge k Sorted Lists <a name="n23"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/merge-k-sorted-lists/))
+###### TAG [Divide and Conquer] [Linked List] [Heap]
+Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
+
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+merge sort
+#####  - Complexity 
+Time:  nlogn
+Space:  n
+#####  - Boundary Conditions
+odd/even
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(E) Merge Two Sorted Lists, (M) Ugly Number II
+
+#### Solution
+```Java
+public class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        if(lists.length==0) return null;
+        if(lists.length==1) return lists[0];
+        int len = lists.length;
+        while(len>1){
+            for(int i=0;i<len/2;i++){
+                lists[i] = merge2(lists[i*2],lists[i*2+1]);
+            }
+            if(len%2==1) lists[len/2]=lists[len-1];
+            len++;
+            len/=2;
+        }
+        return lists[0];
+    }
+    
+    ListNode merge2(ListNode a, ListNode b){
+        ListNode ret = new ListNode(0), curr=ret;
+        while(a!=null&&b!=null){
+            if(a.val>b.val){curr.next = new ListNode(b.val);b=b.next;}
+            else{curr.next = new ListNode(a.val);a=a.next;}
+            curr=curr.next;
+        }
+        if(a==null) curr.next=b;
+        else curr.next=a;
+        return ret.next;
+    }
+}
+```
+[Top](#top)
 
 
 
