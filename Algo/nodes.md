@@ -23,6 +23,16 @@
 18. [4Sum](#n18)
 19. [Remove Nth Node From End of List](#n19)
 20. [Valid Parentheses](#n20)
+21. [Merge Two Sorted Lists](#21)
+22. [Generate Parentheses](#22)
+23. [Merge k Sorted Lists](#23)
+24. [Swap Nodes in Pairs](#24)
+25. [Reverse Nodes in k-Group](#25)
+26. [Remove Duplicates from Sorted Array](#26)
+27. [Remove Element](#27)
+28. [Implement strStr()](#28)
+29. [Divide Two Integers](#29)
+30. [Substring with Concatenation of All Words](#30)
 
 
 [Top](#top)
@@ -1197,6 +1207,329 @@ public class Solution {
 ```
 [Top](#top)
 
+## #24. Swap Nodes in Pairs <a name="n24"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/swap-nodes-in-pairs/))
+###### TAG 
+Given a linked list, swap every two adjacent nodes and return its head.
+
+**For example**,
+Given ```1->2->3->4```, you should return the list as ```2->1->4->3```.
+
+Your algorithm should use only constant space. You may not modify the values in the list, only nodes itself can be changed.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+if the rest of chain has two nodes, exchange them
+#####  - Complexity 
+Time:  O(n)
+Space:  O(1)
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(H) Reverse Nodes in k-Group
+
+#### Solution
+```Java
+public class Solution {
+    public ListNode swapPairs(ListNode head) {
+        ListNode ret = new ListNode(0),prev=ret,curr=head;
+        ret.next = head;
+        while(curr!=null&&curr.next!=null){
+            prev.next=curr.next;
+            curr.next=curr.next.next;
+            prev.next.next=curr;
+            prev=curr;
+            curr=curr.next;
+        }
+        return ret.next;
+    }
+}
+```
+[Top](#top)
+
+
+## #25. Reverse Nodes in k-Group <a name="n25"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/reverse-nodes-in-k-group/))
+###### TAG [linked list]
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+go k pointers first
+#####  - Complexity 
+Time: O(n) 
+Space:  O(1)
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(E) Swap Nodes in Pairs
+
+#### Solution
+```Java
+public class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        if(k==1) return head;
+        ListNode ret = new ListNode(0),last = ret,p=head;
+        ret.next = head;
+        while(p!=null){
+            int count=0;
+            while(count++<k){
+                if(p==null) return ret.next;
+                p=p.next;
+            }
+            
+            ListNode prev = last.next, curr = prev.next;
+            while(curr!=p){
+                ListNode next=curr.next;
+                curr.next=prev;
+                prev=curr;
+                curr=next;
+            }
+            last.next.next=p;
+            curr=last.next;
+            last.next = prev;
+            last=curr;
+        }
+        return ret.next;
+    }
+}
+```
+[Top](#top)
+
+## #26. Remove Duplicates from Sorted Array <a name="n26"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/remove-duplicates-from-sorted-array/))
+###### TAG [two pointers]
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  O(n)
+Space:  O(1)
+#####  - Boundary Conditions
+length==0
+#####  - Mistakes
+arr update with if block.
+#####  - Further Considerations
+#####  - Related Problems
+(E) Remove Element
+
+#### Solution
+```Java
+public class Solution {
+    public int removeDuplicates(int[] nums) {
+       if(nums.length==0) return 0;
+       int p=1;
+       for(int i=1;i<nums.length;i++){
+           if(nums[i-1]!=nums[i])
+            nums[p++]=nums[i];
+       }
+       return p;
+    }
+}
+```
+[Top](#top)
+
+## #27. Remove Element <a name="n27"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/remove-element/))
+###### TAG [two pointers]
+Given an array and a value, remove all instances of that value in place and return the new length.
+
+Do not allocate extra space for another array, you must do this in place with constant memory.
+
+The order of elements can be changed. It doesn't matter what you leave beyond the new length.
+
+**Example**:
+Given input array nums = [3,2,2,3], val = 3
+
+Your function should return length = 2, with the first two elements of nums being 2.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  n
+Space:  1
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(E) Remove Duplicates from Sorted Array, (E) Remove Linked List Elements, (E) Move Zeroes
+
+#### Solution
+```Java
+public class Solution {
+    public int removeElement(int[] nums, int val) {
+        int p=0;
+        for(int i=0;i<nums.length;i++){
+            if(nums[i]!=val)nums[p++]=nums[i];
+        }
+        return p;
+    }
+}
+```
+[Top](#top)
+
+
+## #28. Implement strStr() <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG [two pointers]
+Implement strStr().
+
+Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  m*n
+Space:  1
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(H) Shortest Palindrome, (E) Repeated Substring Pattern
+
+#### Solution
+```Java
+public class Solution {
+    public int strStr(String haystack, String needle) {
+        int p=0,q=0;
+        outer:
+        for(int i=0;i<haystack.length()-needle.length()+1;i++){
+            for(int j=0;j<needle.length();j++){
+                if(haystack.charAt(i+j)!=needle.charAt(j)) continue outer;
+            }
+            return i;
+        }
+        return -1;
+    }
+}
+```
+[Top](#top)
+
+## #29. Divide Two Integers <a name="n29"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/divide-two-integers/))
+###### TAG [Math] [Binary Search]
+Divide two integers without using multiplication, division and mod operator.
+
+If it is overflow, return MAX_INT.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+Log(n), double divisor first;
+#####  - Complexity 
+Time: log(n) 
+Space:  1
+#####  - Boundary Conditions
+overflow, pos/neg
+#####  - Mistakes
+int a =  (-1<<31)  
+a==-a&&a!=0;
+
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        if(dividend==0) return 0;
+        boolean neg = dividend>0&&divisor<0||dividend<0&&divisor>0;
+        long a = dividend, b = divisor,count = 0,m=1,b2=Math.abs(b);
+        a = Math.abs(a);
+        b = b2;
+        while(a>b){
+            b<<=1;
+            m<<=1;
+        }
+        while(b>=b2){
+            if(a>=b){
+                a-=b;
+                count+=m;
+                
+            }
+            b>>=1;
+            m>>=1;
+        }
+        return (int)(neg?Math.max(Integer.MIN_VALUE,-count):Math.min(Integer.MAX_VALUE,count));
+    }
+}
+```
+[Top](#top)
+
+## #30. Substring with Concatenation of All Words <a name="n30"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/substring-with-concatenation-of-all-words/))
+###### TAG [hash table] [two pointers]
+You are given a string, s, and a list of words, words, that are all of the same length. Find all starting indices of substring(s) in s that is a concatenation of each word in words exactly once and without any intervening characters.
+
+For example, given:
+
+	s: "barfoothefoobarman"
+	words: ["foo", "bar"]
+
+You should return the indices: [0,9].  
+(order does not matter).
+#### Thought
+#####  - Key word
+#####  - Key Idea
+window, counter, count for "out of use" word
+#####  - Complexity 
+Time:  n
+Space:  n
+#####  - Boundary Conditions
+empty, remove first(one pass, multi solutions), 
+#####  - Mistakes
+
+#####  - Further Considerations
+#####  - Related Problems
+(H) Minimum Window Substring
+
+#### Solution
+```Java
+public class Solution {
+    public List<Integer> findSubstring(String s, String[] words) {
+        List<Integer> ret = new ArrayList<>();
+        if(s.length()==0||words.length==0) return ret;
+        int wL = words[0].length(), winL = words.length*wL;
+        Map<String,Integer> m = new HashMap<>();
+        for(String word:words) m.put(word,m.getOrDefault(word,0)+1);
+        for(int winInit = 0;winInit<wL;winInit++){
+            Map<String,Integer> counter = new HashMap<>();
+            int count = 0, index=winInit;
+            for(int i=winInit;i+wL<=s.length()&&index+winL<=s.length();i+=wL){
+                String sub = s.substring(i,i+wL);
+                if(!m.containsKey(sub)){
+                    index = i+wL;
+                    count = 0;
+                    counter.clear();
+                }
+                else{
+                    if(index+winL==i){
+                        String first = s.substring(index,index+wL);
+                        counter.put(first,counter.get(first)-1);
+                        index+=wL;
+                        if(counter.get(first)>=m.get(first)) count--;
+                    }
+                    counter.put(sub,counter.getOrDefault(sub,0)+1);
+                    if(counter.get(sub)>m.get(sub)) count++;
+                    if(count==0&&i+wL==index+winL) ret.add(index);
+                }
+            }
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
 
 
 ## # <a name="n"></a>
@@ -1220,5 +1553,4 @@ Space:
 
 ```
 [Top](#top)
-
 
