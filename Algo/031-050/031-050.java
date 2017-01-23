@@ -50,7 +50,7 @@ public class Solution {
     }
 }
 
-// 035
+// 033
 public class Solution {
     public int search(int[] nums, int target) {
         if(nums.length==0) return -1;
@@ -63,7 +63,6 @@ public class Solution {
         if(target<nums[0]&&target>nums[nums.length-1]) return -1;
         while(a<b){
             border = (a+b)/2;
-            //System.out.println(a+":"+border+":"+b);
             if(nums[border-1]>nums[border]) break;
             if(nums[border]>nums[a]) a=border;
             else if(nums[border]<nums[b-1]) b=border;

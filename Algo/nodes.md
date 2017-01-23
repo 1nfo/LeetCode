@@ -1531,6 +1531,570 @@ public class Solution {
 [Top](#top)
 
 
+## #31. Next Permutation <a name="n31"></a>
+
+#### Problem Statement ([link]())
+###### TAG [Array]
+Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of numbers.
+
+If such arrangement is not possible, it must rearrange it as the lowest possible order (ie, sorted in ascending order).
+
+The replacement must be in-place, do not allocate extra memory.
+
+Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
+1,2,3 → 1,3,2
+3,2,1 → 1,2,3
+1,1,5 → 1,5,1
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public void nextPermutation(int[] nums) {
+        if(nums.length<2) return;
+        int peak=0;
+        for(int i=1;i<nums.length;i++) if(nums[i-1]<nums[i]) peak=i;
+        if(peak!=0){
+            int target = peak;
+            for(int i=peak+1;i<nums.length;i++) if(nums[target]>nums[i]&&nums[peak-1]<nums[i]) target=i;
+            swap(nums,target,peak-1);
+        }
+        heapsort(nums,peak);
+    }
+    void heapsort(int[] nums, int start){
+        int len = nums.length-start;
+        for(int i=len/2-1;i>=0;i--) heapify(nums,start,i,len+start);
+        for(int i=len-1;i>=0;i--){
+            swap(nums,start,start+i);
+            heapify(nums,start,0,i+start);
+        }
+    }
+    void heapify(int[] nums,int start, int begin,int end){
+        int p = start+begin, c = start+begin*2+1;
+        while(c<end){
+            if(c+1<end&&nums[c+1]>nums[c]) c++;
+            if(nums[c]<=nums[p]) break;
+            swap(nums,p,c);
+            p=c;
+            c=p*2+1-start;
+        }
+    }
+    void swap(int[] nums, int a,int b){
+        int tmp = nums[a];
+        nums[a] = nums[b];
+        nums[b] = tmp;
+    }
+}
+```
+[Top](#top)
+
+## #32. Longest Valid Parentheses <a name="n32"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/longest-valid-parentheses/))
+###### TAG [dp]
+Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
+
+For "(()", the longest valid parentheses substring is "()", which has length = 2.
+
+Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+count, dp, ret
+#####  - Complexity 
+Time:  n
+Space:  n
+#####  - Boundary Conditions
+dp[0] = 0
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(E) Valid Parentheses
+
+#### Solution
+```Java
+public class Solution {
+    public int longestValidParentheses(String s) {
+        int ret=0,count=0;
+        int dp[] = new int[s.length()+1];
+        dp[0] = 0;
+        for(int i=0;i<s.length();i++){
+            char c = s.charAt(i);
+            if(c=='(') count++;
+            else if(count>0){
+                dp[i+1]=dp[i]+2;
+                dp[i+1]+=dp[i+1-dp[i+1]];
+                count--;
+            }
+            ret =  Math.max(ret,dp[i+1]);
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #33. Search in Rotated Sorted Array <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 【binay search】
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+You are given a target value to search. If found in the array return its index, otherwise return -1.
+
+You may assume no duplicate exists in the array.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+divide into rotated arr and normal arr, then recursively solve.
+#####  - Complexity 
+Time:  log(n)
+Space:  1
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+all binary search can be recursive? 
+#####  - Related Problems
+(M) Search in Rotated Sorted Array II, (M) Find Minimum in Rotated Sorted Array
+
+#### Solution
+```Java
+public class Solution {
+    public int search(int[] nums, int target) {
+        return searchRotated(nums,0,nums.length,target);
+    }
+    
+    int searchRotated(int[] nums, int start, int end, int target){
+        if (start>=end) return -1;
+        if(nums[start]<nums[end-1]) return searchNormal(nums, start, end, target);
+        int m = (start+end)/2;
+        if(nums[m]==target) return m;
+        if(nums[start]==target) return start;
+        if(nums[start]<nums[m]){
+            if(target<nums[m]&&target>nums[start]) return searchNormal(nums, start+1,m,target);
+            else return searchRotated(nums,m+1,end,target);
+        }
+        else{
+            if(target>nums[m]&&target<nums[start]) return searchNormal(nums,m+1,end,target);
+            else return searchRotated(nums,start+1,m,target);
+        }
+    }
+    
+    int searchNormal(int[] nums, int start, int end, int target){
+        if(start>=end) return -1;
+        int m = (start+end)/2;
+        if(nums[m]>target) return searchNormal(nums,start,m,target);
+        else if(nums[m]<target) return searchNormal(nums,m+1,end,target);
+        else return m;
+    }
+}
+```
+[Top](#top)
+
+## #34. Search for a Range <a name="n34"></a>
+
+#### Problem Statement ([link]())
+###### TAG [binary search] [array]
+Given an array of integers sorted in ascending order, find the starting and ending position of a given target value.
+
+Your algorithm's runtime complexity must be in the order of O(log n).
+
+If the target is not found in the array, return [-1, -1].
+
+For example,
+Given [5, 7, 7, 8, 8, 10] and target value 8,
+return [3, 4].
+#### Thought
+#####  - Key word
+#####  - Key Idea
+find one, then expand the range
+#####  - Complexity 
+Time:  n
+Space:  1
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(E) First Bad Version
+
+#### Solution
+```Java
+public class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        int start = search(nums,0,nums.length,target),end = start;
+        if (start==-1) return new int[]{-1,-1};
+        while(start>0&&nums[start-1]==nums[start]) start--;
+        while(end<nums.length-1&&nums[end]==nums[end+1]) end++;
+        return new int[]{start,end};
+    }
+    int search(int[] nums,int start, int end, int target){
+        if(start>=end) return -1;
+        int m = (start+end)/2;
+        if(nums[m] == target) return m;
+        if(nums[m]>target) return search(nums,start,m,target);
+        else return search(nums,m+1,end,target);
+    }
+}
+```
+[Top](#top)
+
+## #35. Search Insert Position <a name="n35"></a>
+
+#### Problem Statement ([link]())
+###### TAG [array] [binary search] 
+Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+You may assume no duplicates in the array.
+
+Here are few examples.
+[1,3,5,6], 5 → 2
+[1,3,5,6], 2 → 1
+[1,3,5,6], 7 → 4
+[1,3,5,6], 0 → 0
+#### Thought
+#####  - Key word
+#####  - Key Idea
+instead of return -1, return index when start==end, that the place algo wants to go on, so it the inserting position.
+#####  - Complexity 
+Time:  log(n)
+Space:  1
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(E) First Bad Version
+
+
+#### Solution
+```Java
+public class Solution {
+    public int searchInsert(int[] nums, int target) {
+        return bs(nums,0,nums.length,target);
+    }
+    
+    int bs(int [] nums, int start, int end, int target){
+        if (start==end) return start;
+        int m = (start+end)/2;
+        if(nums[m] == target) return m;
+        if(nums[m]>target) return bs(nums,start,m,target);
+        else return bs(nums,m+1,end,target);
+    }
+}
+```
+[Top](#top)
+
+## #36. Valid Sudoku <a name="n"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/valid-sudoku/))
+###### TAG [hash table]
+Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
+
+The Sudoku board could be partially filled, where empty cells are filled with the character '.'.
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+find collision return false;
+#####  - Complexity 
+Time:  n  
+Space:  1
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(H) Sudoku Solver
+
+#### Solution
+```Java
+public class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        return checkRowsAndCols(board)&&checkBlocks(board);
+    }
+    
+    boolean checkRowsAndCols(char[][] board){
+        for(int i=0;i<9;i++){
+            int hashRow = 0, hashCol = 0;
+            for(int j=0;j<9;j++){
+                char cRow = board[i][j], cCol = board[j][i];
+                if(cRow!='.'){
+                    int bit = 1<<(cRow-'1');
+                    if((bit&hashRow)>0) return false;
+                    hashRow |= bit;
+                }
+                if(cCol!='.'){
+                    int bit = 1<<(cCol-'1');
+                    if((bit&hashCol)>0) return false;
+                    hashCol |= bit;
+                }
+            }
+        }
+        return true;
+    }
+    
+    boolean checkBlocks(char[][] board){
+        for(int i=0;i<9;i++){
+            int hashBlock = 0;
+            for(int j=0;j<9;j++){
+                char c = board[(i/3)*3+j/3][(i%3)*3+j%3];
+                if(c!='.'){
+                    int bit = 1<<(c-'1');
+                    if((bit&hashBlock)>0) return false;
+                    hashBlock |= bit;
+                }
+            }
+        }
+        return true;
+    }
+}
+```
+[Top](#top)
+
+
+
+## #37. Sudoku Solver <a name="n"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/sudoku-solver/))
+###### TAG [hash table] [backtracking]
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  n^2
+Space:  1
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(E) Valid Sudoku
+
+#### Solution
+```Java
+public class Solution {
+    public void solveSudoku(char[][] board) {
+        solve(board);
+    }
+    
+    boolean solve(char[][] board){
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                if(board[i][j]!='.') continue;
+                for(int d=1;d<10;d++){
+                    if(validToPut(board,i,j,d)){
+                        board[i][j] = (char)(d+'0');
+                        if(solve(board)) return true;
+                        board[i][j] = '.';
+                    }
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    boolean validToPut(char[][] board, int i, int j, int d){
+        int hashR = 0, hashC = 0, hashB = 0;
+        for(int k=0;k<9;k++){
+            char r = board[i][k],c = board[k][j],b=board[i/3*3+k/3][(j/3*3+k%3)];
+            if(r!='.'&&r-'0'== d||c!='.'&&c-'0'== d||b!='.'&&b-'0'== d) return false;
+        }
+        return true;
+    }
+}
+```
+[Top](#top)
+
+## #38. Count and Say <a name="n"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/count-and-say/))
+###### TAG [String]
+The count-and-say sequence is the sequence of integers beginning as follows:
+1, 11, 21, 1211, 111221, ...
+
+1 is read off as "one 1" or 11.
+11 is read off as "two 1s" or 21.
+21 is read off as "one 2, then one 1" or 1211.
+Given an integer n, generate the nth sequence.
+
+Note: The sequence of integers will be represented as a string.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  n^2
+Space:  n
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+(M) Encode and Decode Strings
+
+#### Solution
+```Java
+public class Solution {
+    public String countAndSay(int n) {
+        if(n<2) return "1";
+        String ret = "11";
+        for(int i=2;i<n;i++){
+            ret = help(ret);
+        }
+        return ret;
+    }
+    
+    String help(String s){
+        StringBuilder sb = new StringBuilder();
+        char prev = s.charAt(0);
+        int count=1;
+        for(int i=1;i<s.length();i++){
+            if(s.charAt(i)==prev) count++;
+            else{
+                sb.append(count);
+                sb.append(prev);
+                count=1;
+                prev = s.charAt(i);
+            }
+        }
+        sb.append(count);
+        sb.append(prev);
+        return sb.toString();
+    }
+}
+```
+[Top](#top)
+
+## #39. Combination Sum <a name="n"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/combination-sum/))
+###### TAG [backtracking]
+Given a set of candidate numbers (C) (without duplicates) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.  
+
+The same repeated number may be chosen from C unlimited number of times.
+
+Note:
+All numbers (including target) will be positive integers.    
+The solution set must not contain duplicate combinations.  
+
+For example, given candidate set [2, 3, 6, 7] and target 7,  
+ 
+A solution set is: 
+
+	[
+	  [7],
+	  [2, 2, 3]
+	]
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  n^2
+Space:  n^2
+#####  - Boundary Conditions
+#####  - Mistakes
+duplicated solutions
+#####  - Further Considerations
+#####  - Related Problems
+(M) Letter Combinations of a Phone Number, (M) Combination Sum II, (M) Combinations, (M) Combination Sum III, (M) Factor Combinations, (M) Combination Sum IV
+
+
+#### Solution
+```Java
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        help(candidates,target,0);
+        return ret;
+    }
+    
+    void help(int[] candidates, int target,int start){
+        if(target==0) ret.add(new ArrayList<>(list));
+        for(int i=start;i<candidates.length;i++){
+            if(candidates[i]<=target){
+                list.add(candidates[i]);
+                help(candidates,target-candidates[i],i);
+                list.remove(list.size()-1);
+            } 
+        }
+    }
+}
+```
+[Top](#top)
+
+## #40. Combination Sum II <a name="n40"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/combination-sum-ii/))
+###### TAG [array][backtracking]
+Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+
+Each number in C may only be used once in the combination.
+
+Note:
+All numbers (including target) will be positive integers.  
+The solution set must not contain duplicate combinations.  
+For example, given candidate set [10, 1, 2, 7, 6, 1, 5] and target 8,   
+A solution set is: 
+	
+	[
+	  [1, 7],
+	  [1, 2, 5],
+	  [2, 6],
+	  [1, 1, 6]
+	]
+#### Thought
+#####  - Key word
+#####  - Key Idea
+sort, remove duplicated(same number start only once)
+#####  - Complexity 
+Time:  n^2  
+Space:  n^2
+#####  - Boundary Conditions
+#####  - Mistakes
+not only starter changed for next recursive call, but more strict when add solutions to the list.
+#####  - Further Considerations
+#####  - Related Problems
+(M) Combination Sum
+
+#### Solution
+```Java
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        help(candidates,target,0);
+        return ret;
+    }
+    
+    void help(int[] candidates, int target, int start){
+        if(target == 0) ret.add(new ArrayList<>(list));
+        for(int i=start;i<candidates.length;i++){
+            if(candidates[i]<=target){
+                if(i>0&&candidates[i-1]==candidates[i]&&start<i) continue;
+                list.add(candidates[i]);
+                help(candidates,target-candidates[i],i+1);
+                list.remove(list.size()-1);
+            }
+        }
+    }
+}
+```
+[Top](#top)
+
+
+
 
 ## # <a name="n"></a>
 
@@ -1553,4 +2117,6 @@ Space:
 
 ```
 [Top](#top)
+
+
 
