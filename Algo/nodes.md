@@ -2093,8 +2093,1398 @@ public class Solution {
 ```
 [Top](#top)
 
+## #41. First Missing Positive <a name="n41"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/first-missing-positive/))
+###### TAG [array]
+Given an unsorted integer array, find the first missing positive integer.
+
+For example,
+Given [1,2,0] return 3,
+and [3,4,-1,1] return 2.
+
+Your algorithm should run in O(n) time and uses constant space.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+two passes, index
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public int firstMissingPositive(int[] nums) {
+        for(int i=0;i<nums.length;){
+            if(nums[i]>0&&nums[i]<=nums.length&&nums[i]!=nums[nums[i]-1]){
+                int tmp = nums[i];
+                nums[i] = nums[tmp-1];
+                nums[tmp-1] = tmp;
+            }
+            else i++;
+        }
+        for(int i=0;i<nums.length;i++){
+            if(nums[i]-1!=i) return i+1;
+        }
+        return nums.length+1;
+    }
+}
+```
+[Top](#top)
+
+## #42. Trapping Rain Water <a name="n42"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+two pointers, level by level
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public int trap(int[] height) {
+        int s = 0, e = height.length-1,level=0,sum=0,blocks = 0;
+        while(s<e){
+            if(height[s]<height[e]){
+                level = Math.max(height[s],level);
+                blocks+=height[s++];
+            }else{
+                level = Math.max(height[e],level);
+                blocks+=height[e--];
+            }
+            sum+=level;
+        }
+        return sum-blocks;
+    }
+}
+```
+[Top](#top)
 
 
+
+
+## #43. Multiply Strings <a name="n"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/multiply-strings/))
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+reverse, last number, zero
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public String multiply(String num1, String num2) {
+        if(num1.equals("0")||num2.equals("0")) return "0";
+        char[] a = num1.toCharArray(), b = num2.toCharArray();
+        int len = a.length+b.length-1, r=0;
+        int[] res = new int[len];
+        for(int i=0;i<a.length;i++){
+            for(int j=0;j<b.length;j++){
+                res[len-i-j-1] += (a[i]-'0')*(b[j]-'0');
+            }
+        }
+        StringBuilder ret = new StringBuilder();
+        for(int i=0;i<len;i++){
+            r += res[i];
+            ret.append(r%10);
+            r /= 10;
+        }
+        if(r>0) ret.append(r);
+        return ret.reverse().toString();
+    }
+}
+```
+[Top](#top)
+
+
+## #44 Wildcard Matching <a name="n"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/wildcard-matching/))
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+base case p==0, s==0, ? / == / * 
+#####  - Complexity 
+Time:  n^2  
+Space:  n^2  
+#####  - Boundary Conditions
+#####  - Mistakes
+"linear" solution (time: n^2 but constant space):   
+keep match string with pattern, track index of "\*", after that if mismatched, count these matches as a part of "\*", then go back to that index and continue to re-match the rest of pattern
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public boolean isMatch(String s, String p) {
+        boolean[][] dp = new boolean[p.length()+1][s.length()+1];
+        dp[0][0] = true;
+        for(int i=0;i<p.length();i++){
+            if(p.charAt(i)=='*') dp[i+1][0] = dp[i][0];
+            for(int j=0;j<s.length();j++){
+                if(p.charAt(i)==s.charAt(j)||p.charAt(i)=='?') dp[i+1][j+1]=dp[i][j];
+                else if(p.charAt(i)=='*') dp[i+1][j+1] = dp[i][j+1]||dp[i+1][j];
+            }
+        }
+        return dp[p.length()][s.length()];
+    }
+}
+```
+[Top](#top)
+
+
+## #46. Permutations <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG [backtracking]
+Given a collection of distinct numbers, return all possible permutations.
+
+For example,
+[1,2,3] have the following permutations:
+
+	[
+	  [1,2,3],
+	  [1,3,2],
+	  [2,1,3],
+	  [2,3,1],
+	  [3,1,2],
+	  [3,2,1]
+	]
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    private boolean[] visited;
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    
+    public List<List<Integer>> permute(int[] nums) {
+        visited = new boolean[nums.length];
+        help(nums);
+        return ret;
+    }
+    
+    void help(int[] nums){
+        if(list.size()==nums.length) ret.add(new ArrayList(list));
+        for(int i=0;i<nums.length;i++){
+            if(visited[i]) continue;
+            list.add(nums[i]);
+            visited[i]=true;
+            help(nums);
+            list.remove(list.size()-1);
+            visited[i]=false;
+        }
+    }
+}
+```
+[Top](#top)
+
+## #47. Permutations II <a name="n47"></a>
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+For example,
+[1,1,2] have the following unique permutations:
+[
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
+]
+#### Problem Statement ([link](https://leetcode.com/problems/permutations-ii/))
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    private boolean[] visited;
+    
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        visited = new boolean[nums.length];
+        Arrays.sort(nums);
+        help(nums);
+        return ret;
+    }
+    
+    void help(int[] nums){
+        if(list.size()==nums.length) ret.add(new ArrayList(list));
+        for(int i=0;i<nums.length;i++){
+            if(visited[i]||i>0&&!visited[i-1]&&nums[i-1]==nums[i]) continue;
+            visited[i]=true;
+            list.add(nums[i]);
+            help(nums);
+            list.remove(list.size()-1);
+            visited[i]=false;
+        }
+    }
+}
+```
+[Top](#top)
+
+## #48. Rotate Image <a name="n48"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/rotate-image/))
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+matrix[y][x], timewise -> a(x,y) = a(y,Y-x-1)
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public void rotate(int[][] matrix) {
+        int M=matrix.length,m=M/2;
+        if(M==0) return;
+        int n=(M+1)/2;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                int tmp = matrix[i][j];
+                matrix[i][j] = matrix[M-j-1][i];
+                matrix[M-j-1][i] = matrix[M-i-1][M-j-1];
+                matrix[M-i-1][M-j-1] = matrix[j][M-i-1];
+                matrix[j][M-i-1] = tmp;
+            }
+        }
+    }
+}
+```
+[Top](#top)
+
+## #49. Group Anagrams <a name="n49"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/anagrams/))
+###### TAG [hashtable]
+Given an array of strings, group anagrams together.
+
+For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"], 
+Return:
+
+	[
+	  ["ate", "eat","tea"],
+	  ["nat","tan"],
+	  ["bat"]
+	]
+#### Thought
+#####  - Key word
+#####  - Key Idea
+prime hash
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        List<List<String>> ret = new ArrayList<>();
+        Map<Integer,List<String>> m = new HashMap<>();
+        int[] prime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103};
+        for(String str:strs){
+            int key = 1;
+            for(char c:str.toCharArray()) key *= prime[c-'a'];
+            if(!m.containsKey(key)) m.put(key,new ArrayList<>());
+            m.get(key).add(str);
+        }
+        for(int k:m.keySet()) ret.add(m.get(k));
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #50. Pow(x, n) <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+Implement pow(x, n).
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+log(n),  
+-(-1<<31) == -1<<31
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public double myPow(double x, int n) {
+        if(n==0||x==1) return 1;
+        if(n==1) return x;
+        if(n==-1) return 1/x;
+        return myPow(x,n%2)*myPow(x*x,n/2);
+    }
+}
+```
+[Top](#top)
+
+## #51. N-Queens <a name="n51"></a>
+#### Problem Statement ([link](https://leetcode.com/problems/n-queens/))
+###### TAG [backtracking]
+The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+
+Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+
+For example,
+There exist two distinct solutions to the 4-queens puzzle:
+
+	[
+	 [".Q..",  // Solution 1
+	  "...Q",
+	  "Q...",
+	  "..Q."],
+	
+	 ["..Q.",  // Solution 2
+	  "Q...",
+	  "...Q",
+	  ".Q.."]
+	]
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+replica: one row add one, no less no more
+#####  - Further Considerations
+no need to track rows, add row by row;
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    private boolean[][] used;
+    private boolean[] col,dA,dB;
+    private List<List<String>> ret = new ArrayList<>();
+    private int n;
+    
+    public List<List<String>> solveNQueens(int n) {
+        this.n = n;
+        used = new boolean[n][n];
+        col = new boolean[n];
+        dA = new boolean[2*n-1];
+        dB = new boolean[2*n-1];
+        help(0);
+        return ret;
+    }
+    
+    void help(int i){
+            for(int j=0;j<n;j++){
+                if(col[j]||dA[i+j]||dB[n+i-j-1]) continue;
+                col[j]=dA[i+j]=dB[n+i-j-1]=used[i][j]=true;
+                if(i+1==n) addS();
+                help(i+1);
+                col[j]=dA[i+j]=dB[n+i-j-1]=used[i][j]=false;
+            }
+    }
+    
+    void addS(){
+        List<String> list = new ArrayList<>();
+        for(int i=0;i<n;i++){
+            StringBuilder sb = new StringBuilder();
+            for(int j=0;j<n;j++) sb.append(used[i][j]?'Q':'.');
+            list.add(sb.toString());
+        }
+        ret.add(list);
+    }
+}
+```
+[Top](#top)
+
+## #52. N-Queens II <a name="n"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/n-queens-ii/))
+###### TAG 
+Follow up for N-Queens problem.
+
+Now, instead outputting board configurations, return the total number of distinct solutions.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+row by row, no need to nested loops.
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    private int ret = 0, n;
+    private boolean[]  col, dA, dB;
+    public int totalNQueens(int n) {
+        this.n = n;
+        col = new boolean[n];
+        dA = new boolean[2*n-1];
+        dB = new boolean[2*n-1];
+        help(0);
+        return ret;
+    }
+    
+    void help(int count){
+        if (n==count){
+            ret++;
+            return;
+        }
+        for(int j=0;j<n;j++){
+            int t = count+j, s = n+count-j-1;
+            if(col[j]||dA[t]||dB[s]) continue;
+            col[j]=dA[t]=dB[s]=true;
+            help(count+1);
+            col[j]=dA[t]=dB[s]=false;
+        }
+    }
+}
+```
+[Top](#top)
+
+## #53. Maximum Subarray <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+public class Solution {
+    public int maxSubArray(int[] nums) {
+        int sum = 0, max = nums[0];
+        for(int i:nums){
+            if(sum>0) sum+=i;
+            else sum=i;
+            if(max<sum) max=sum;
+        }
+        return max;
+    }
+}
+```
+[Top](#top)
+
+
+## #54. Spiral Matrix <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```Java
+ public class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> ret= new ArrayList<>();
+        if (matrix.length==0) return ret;
+        int M=matrix[0].length-1,N=matrix.length-1,m=0,n=0,total=M*N+M+N+1,i,j;
+        while(m<=M&&n<=N){
+            for(j=m;j<=M;j++) ret.add(matrix[n][j]);
+            if(++n>N) break;
+            for(i=n;i<=N;i++) ret.add(matrix[i][M]);
+            if(m>--M) break;
+            for(j=M;j>=m;j--) ret.add(matrix[N][j]);
+            if(n>--N) break;
+            for(i=N;i>=n;i--) ret.add(matrix[i][m]);
+            if(++m>M) break;
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #55. Jump Game<a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public boolean canJump(int[] nums) {
+        int maxReach = nums[0],i=0;
+        while(++i<nums.length&&i<=maxReach){
+            if(i+nums[i]>maxReach) maxReach = i+nums[i];
+            if(maxReach>nums.length-2) return true;
+        }
+        return maxReach>nums.length-2;
+    }
+}
+```
+[Top](#top)
+
+## #56. Merge Intervals <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public List<Interval> merge(List<Interval> intervals) {
+        List<Interval> ret = new ArrayList<>();
+        
+        for(Interval x:intervals){
+            if(ret.size() == 0) ret.add(x);
+            else{
+                boolean iter=true;
+                while(iter){
+                    iter=false;
+                    for(Interval y:ret){
+                        if(mergable(x,y)||mergable(y,x)){
+                            int start = x.start>y.start?y.start:x.start;
+                            int end = x.end>y.end?x.end:y.end;
+                            ret.remove(y);
+                            x = new Interval(start,end);
+                            iter=true;
+                            break;
+                        }
+                    }
+                }
+                ret.add(x);
+            }
+        }
+        return ret;
+    }
+    boolean mergable(Interval a, Interval b){
+        return a.start<=b.start&&b.start<=a.end||a.start<=b.end&&b.end<=a.end;
+    }
+}
+```
+[Top](#top)
+
+## #57. Insert Interval <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
+        List<Interval> ret = new ArrayList<>();
+        int first = -1, last = -1;
+        if(intervals.size()==0) ret.add(newInterval);
+        else{
+            for(int k = 0;k<intervals.size();k++){
+                Interval interval = intervals.get(k);
+                if(interval.start<=newInterval.end&&newInterval.start<=interval.end){
+                    last = k;
+                    if(first==-1) first=k;
+                }
+            }
+            if(first==-1){
+                boolean added = false;
+                for(Interval i:intervals){
+                    if(!added&&newInterval.end<i.start){
+                        ret.add(newInterval);
+                        added=true;
+                    }
+                    ret.add(i);
+                }
+                if(intervals.get(intervals.size()-1).end<newInterval.start) ret.add(newInterval);
+            }
+            else{
+                int start = 0, end  = 0;
+                for(int i=0;i<intervals.size();i++){
+                    if(i<first||i>last) ret.add(intervals.get(i));
+                    else{
+                        if(i==first) start = Math.min(intervals.get(i).start, newInterval.start);
+                        if(i==last){
+                            end = Math.max(intervals.get(i).end,newInterval.end);
+                            ret.add(new Interval(start,end));
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #58. Length of Last Word <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int lengthOfLastWord(String s) {
+        int i = s.length(), count = 0;
+        while(i>0&&s.charAt(i-1)==' ') i--;
+        while(i>0&&s.charAt(--i)!=' ') count++;
+        return count;
+    }
+}
+```
+[Top](#top)
+
+## #59. Spiral Matrix II <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int[][] generateMatrix(int n) {
+        int[][] ret = new int[n][n];
+        int m=0,M=n-1, count=1, i=0, j=0;
+        while(count<n*n){
+            while(i<M) ret[j][i++] = count++;
+            while(j<M) ret[j++][i] = count++;
+            while(i>m) ret[j][i--] = count++;
+            while(j>m) ret[j--][i] = count++;
+            i=j=++m;
+            M--;
+        }
+        if(n%2==1) ret[i][j] = n*n;
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #60. Permutation Sequence <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public String getPermutation(int n, int k) {
+        k--;
+        boolean[] used = new boolean[n];
+        StringBuilder sb = new StringBuilder();
+        int[] r = new int[n];
+        r[0] = 1;
+        for(int i=1;i<n;i++)r[i] = r[i-1]*i;
+        for(int i=0;i<n;i++){
+            int d = k / r[n-1-i] + 1, count=0;
+            for(int j=0;j<n;j++){
+                if(!used[j]) count++;
+                if(count==d){
+                    sb.append((char)('1'+j));
+                    used[j] = true;
+                    k %= r[n-i-1];
+                    break;
+                }
+            }
+        }
+        return sb.toString();
+    }
+}
+```
+[Top](#top)
+
+## #61. Rotate List <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        if(head==null) return head;
+        int count = 0;
+        ListNode p = head, ret = new ListNode(0), q = ret;
+        while(p!=null) {count++;p=p.next;}
+        k %= count;
+        p = ret;
+        ret.next = head;
+        while(k-->0) p=p.next;
+        while(p.next!=null){p=p.next;q=q.next;}
+        p.next = head;
+        ret = q.next;
+        q.next = null;
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #60. Permutation Sequence <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public String getPermutation(int n, int k) {
+        k--;
+        boolean[] used = new boolean[n];
+        StringBuilder sb = new StringBuilder();
+        int[] r = new int[n];
+        r[0] = 1;
+        for(int i=1;i<n;i++)r[i] = r[i-1]*i;
+        for(int i=0;i<n;i++){
+            int d = k / r[n-1-i] + 1, count=0;
+            for(int j=0;j<n;j++){
+                if(!used[j]) count++;
+                if(count==d){
+                    sb.append((char)('1'+j));
+                    used[j] = true;
+                    k %= r[n-i-1];
+                    break;
+                }
+            }
+        }
+        return sb.toString();
+    }
+}
+```
+[Top](#top)
+
+## #62. Unique Paths <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG [dp]
+A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+
+The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+How many possible unique paths are there?
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
+        for(int i=0;i<m;i++) dp[i][0] = 1;
+        for(int i=0;i<n;i++) dp[0][i] = 1;
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                dp[i][j] = dp[i-1][j]+dp[i][j-1];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+}
+```
+[Top](#top)
+
+## #63. Unique Paths II <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        if(obstacleGrid[0][0]==1) return 0;
+        int[][] dp = new int[obstacleGrid.length][obstacleGrid[0].length];
+        dp[0][0] = 1;
+        for(int i=1;i<obstacleGrid.length;i++) 
+            if(obstacleGrid[i][0]==1) break;
+            else dp[i][0] = dp[i-1][0];
+        for(int i=1;i<obstacleGrid[0].length;i++) 
+            if(obstacleGrid[0][i]==1) break; 
+            else dp[0][i] = dp[0][i-1];
+        for(int i=1;i<obstacleGrid.length;i++){
+            for(int j=1;j<obstacleGrid[0].length;j++){
+                if(obstacleGrid[i][j]==1) continue;
+                else dp[i][j] = dp[i-1][j]+dp[i][j-1];
+            }
+        }
+        return dp[obstacleGrid.length-1][obstacleGrid[0].length-1];
+    }
+}
+```
+[Top](#top)
+
+## #64. Minimum Path Sum <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int minPathSum(int[][] grid) {
+        int[][] dp = new int[grid.length][grid[0].length];
+        dp[0][0] = grid[0][0];
+        for(int i=1;i<grid.length;i++) dp[i][0] = grid[i][0] + dp[i-1][0];
+        for(int i=1;i<grid[0].length;i++) dp[0][i] = grid[0][i] + dp[0][i-1];
+        for(int i=1;i<grid.length;i++){
+            for(int j=1;j<grid[0].length;j++){
+                dp[i][j] = Math.min(dp[i-1][j],dp[i][j-1]) + grid[i][j];
+            }
+        }
+        return dp[grid.length-1][grid[0].length-1];
+    }
+}
+```
+[Top](#top)
+
+## #65. Valid Number <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public boolean isNumber(String s) {
+        s = s.trim();
+        if (s.length()==0) return false;
+        int i=0;
+        boolean beforeDot = false;
+        if(s.charAt(i)=='+'||s.charAt(i)=='-') i++;
+        if(s.charAt(i)=='.'){
+            if(++i>=s.length()||s.charAt(i)<'0'||s.charAt(i)>'9') return false;
+            while(++i<s.length()&&s.charAt(i)>='0'&&s.charAt(i)<='9');
+            if(i>=s.length()) return true;
+        }
+        else{
+            if(i>=s.length()||s.charAt(i)<'0'||s.charAt(i)>'9') return false;
+            while(++i<s.length()&&s.charAt(i)>='0'&&s.charAt(i)<='9');
+            if(i>=s.length()) return true;
+            if(s.charAt(i)=='.'){
+                while(++i<s.length()&&s.charAt(i)>='0'&&s.charAt(i)<='9');
+                if(i>=s.length()) return true;
+            }
+            else if(s.charAt(i)!='e') return false;
+        }
+        if(s.charAt(i++)!='e'||i>=s.length()) return false;
+        if(s.charAt(i)=='+'||s.charAt(i)=='-') i++;
+        if(i>=s.length()) return false;
+        while(i<s.length()&&s.charAt(i)>='0'&&s.charAt(i)<='9') i++;
+        if(i>=s.length()) return true;
+        else return false;
+        //String regexp = "^(\\+|-)?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)(e(\\+|-)?[0-9]+)?$";
+        //return s.trim().replaceAll(regexp,"").length()==0;
+    }
+}
+```
+[Top](#top)
+
+## #66. Plus One <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int[] plusOne(int[] digits) {
+        for(int i=digits.length-1;i>=0;i--){
+            if(digits[i]++<9) return digits; 
+            digits[i]=0;
+        }
+        int[] ret = new int[digits.length+1];
+        ret[0] = 1;
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #67. Add Binary <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public String addBinary(String a, String b) {
+        if(a.length()>b.length()) return addBinary(b,a);
+        StringBuilder sb = new StringBuilder();
+        int r = 0, i = 0;
+        for(;i<a.length()&&i<b.length();i++){
+            int x = a.charAt(a.length()-i-1)-'0', y = b.charAt(b.length()-i-1)-'0';
+            r += x+y;
+            sb.append(r%2);
+            r /= 2;
+        }
+        if(a.length()<b.length()){
+            while(i<b.length()){
+                r += b.charAt(b.length()-i++-1) -'0';
+                sb.append(r%2);
+                r/=2;
+            }
+        }
+        if(r==1) sb.append("1");
+        return sb.reverse().toString();
+    }
+}
+```
+[Top](#top)
+
+## #68. Text Justification <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> ret = new ArrayList<>();
+        int start=0, end=start, length = 0, minSpace = 0;
+        for(;end<words.length;end++){
+            int l = words[end].length();
+            if(length+l+end-start>maxWidth){
+                ret.add(packStrings(Arrays.copyOfRange(words,start,end),maxWidth,length));
+                length = 0;
+                start = end;
+            }
+            length +=l;
+        }
+        ret.add(packLastLine(Arrays.copyOfRange(words,start,end),maxWidth, length));
+        return ret;
+    }
+    
+    String packStrings(String[] arr, int width, int length){
+        StringBuilder sb = new StringBuilder();
+        if(arr.length==1){
+            sb.append(arr[0]);
+            for(int i=0;i<width-length;i++) sb.append(' ');
+            return sb.toString();
+        }
+        int m = arr.length-1, n = width - length, gap = n / m;
+        for(int i = 0;i<m;i++){
+            sb.append(arr[i]);
+            for(int j = 0;j<gap;j++) sb.append(' ');
+            if(i<n%m) sb.append(' ');
+        }
+        sb.append(arr[arr.length-1]);
+        return sb.toString();
+    }
+    
+    String packLastLine(String[] arr, int width, int length){
+        StringBuilder sb = new StringBuilder();
+        for(String str:arr) sb.append(str+" ");
+        sb.deleteCharAt(sb.length()-1);
+        for(int i = length+arr.length-1;i<width;i++) sb.append(' ');
+        return sb.toString();
+    }
+}
+```
+[Top](#top)
+
+## #69. Sqrt(x) <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+overflow
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int mySqrt(int x) {
+        long r = x;
+        while(r*r>x){
+            r += x/r;
+            r /= 2;
+        }
+        return (int)r;
+    }
+}
+
+public class Solution {
+    public int mySqrt(int x) {
+        if(x==0) return 0;
+        int start = 0, end = x;
+        while(true){
+            int m =start+(end-start)/2;
+            if(m+1 <= x/(m+1)) start = m+1;
+            else if(m>x/m) end = m-1;
+            else return m;
+        }
+    }
+}
+```
+[Top](#top)
+
+## #70. Climbing Stairs <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int climbStairs(int n) {
+        int[] dp = new int[n];
+        dp[0] = 1;
+        if(n>1) dp[1] = 2;
+        for(int i=2;i<n;i++) dp[i] = dp[i-1]+dp[i-2];
+        return dp[n-1];
+    }
+}
+```
+[Top](#top)
+
+## #71. Simplify Path <a name="n71"></a>
+
+#### Problem Statement ([link](https://leetcode.com/problems/simplify-path/))
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+if using '/' to trigger pop/push of the stack, don't forget last one if path doesn't end with '/';
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public String simplifyPath(String path) {
+        StringBuilder sb = new StringBuilder();
+        Stack<String> stack = new Stack<>();
+        path +="/";
+        int start=0;
+        for(int i= 0;i<path.length();i++){
+            char c = path.charAt(i);
+            if(c=='/'){
+                String str = path.substring(start,i);
+                start=i+1;
+                if(str.equals("")||str.equals(".")) continue;
+                else if(!str.equals(".."))stack.push(str);
+                else if(!stack.isEmpty())stack.pop();
+            }
+        }
+        if(stack.isEmpty()) return "/";
+        for(String str:(Iterable<String>) stack) sb.append("/"+str);
+        return sb.toString();
+    }
+}
+```
+[Top](#top)
+
+## #72. Edit Distance <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG [dp]
+Given two words word1 and word2, find the minimum number of steps required to convert word1 to word2. (each operation is counted as 1 step.)
+
+You have the following 3 operations permitted on a word:
+
+a) Insert a character
+b) Delete a character
+c) Replace a character
+Subscribe to see which companies asked this question.
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int minDistance(String word1, String word2) {
+        int[][] dp = new int[word1.length()+1][word2.length()+1];
+        for(int i=0;i<word1.length();i++) dp[i+1][0]=i+1;
+        for(int i=0;i<word2.length();i++) dp[0][i+1]=i+1;
+        for(int i=0;i<word1.length();i++){
+            for(int j=0;j<word2.length();j++){
+                if(word1.charAt(i)==word2.charAt(j)) dp[i+1][j+1]=dp[i][j];
+                else dp[i+1][j+1]=Math.min(dp[i][j],Math.min(dp[i][j+1],dp[i+1][j]))+1;
+            }
+        }
+        return dp[word1.length()][word2.length()];
+    }
+}
+```
+[Top](#top)
 
 ## # <a name="n"></a>
 
@@ -2113,10 +3503,29 @@ Space:
 #####  - Related Problems
 
 #### Solution
-```Java
+```java
 
 ```
 [Top](#top)
 
+## # <a name="n"></a>
 
+#### Problem Statement ([link]())
+###### TAG 
 
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+
+```
+[Top](#top)

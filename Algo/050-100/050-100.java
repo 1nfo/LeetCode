@@ -87,10 +87,9 @@ public class Solution {
             for(i=n;i<=N;i++) ret.add(matrix[i][M]);
             if(m>--M) break;
             for(j=M;j>=m;j--) ret.add(matrix[N][j]);
-            //if(n>--N) break;
+            if(n>--N) break;
             for(i=N;i>=n;i--) ret.add(matrix[i][m]);
-            //if(++m>) break;
-
+            if(++m>M) break;
         }
         return ret;
     }
@@ -427,6 +426,33 @@ public class Solution {
         return ret.toString();
     }
 }
+
+// 069
+public class Solution {
+    public int mySqrt(int x) {
+        long r = x;
+        while(r*r>x){
+            r += x/r;
+            r /= 2;
+        }
+        return (int)r;
+    }
+}
+
+public class Solution {
+    public int mySqrt(int x) {
+        if(x==0) return 0;
+        int start = 0, end = x;
+        while(true){
+            int m =start+(end-start)/2;
+            if(m+1 <= x/(m+1)) start = m+1;
+            else if(m>x/m) end = m-1;
+            else return m;
+        }
+    }
+}
+
+
 
 // 070
 public class Solution {
