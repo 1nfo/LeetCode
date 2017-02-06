@@ -553,3 +553,16 @@ public class Solution {
         return index;
     }
 }
+
+// 442
+public class Solution {
+    public List<Integer> findDuplicates(int[] nums) {
+        List<Integer> list = new ArrayList<>();
+        for(int i:nums){
+            int j = Math.abs(i)-1;
+            if(nums[j]>0) nums[j]*= -1;
+            else list.add(j+1);
+        }
+        return list;
+    }
+}
