@@ -600,29 +600,48 @@ public class Solution {
 
 // 077
 public class Solution {
+    private boolean[] used;
     private List<List<Integer>> ret = new ArrayList<>();
     private List<Integer> list = new ArrayList<>();
-    private int n;
-    private int k;
-    private boolean[] used;
+    private int k,n;
+
     public List<List<Integer>> combine(int n, int k) {
-        this.n=n;
-        this.k=k;
         this.used = new boolean[n];
+        this.k = k;
+        this.n = n;
         help(0);
         return ret;
     }
 
-    void help(int j){
-        for(int i=0;i<n;i++){
-            if(used[i]||i<j) continue;
+    void help(int start){
+        if(list.size()==k) ret.add(new ArrayList(list));
+        for(int i=start;i<n;i++){
+            if(used[i]) continue;
             list.add(i+1);
             used[i]=true;
-            if(list.size()==k) ret.add(new ArrayList(list));
-            else help(i);
-            list.remove(list.size()-1);
+            help(i);
             used[i]=false;
+            list.remove(list.size()-1);
         }
+    }
+}
+
+public class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (k > n || k < 0) {
+            return result;
+        }
+        if (k == 0) {
+            result.add(new ArrayList<Integer>());
+            return result;
+        }
+        result = combine(n - 1, k - 1);
+        for (List<Integer> list : result) {
+            list.add(n);
+        }
+        result.addAll(combine(n - 1, k));
+        return result;
     }
 }
 

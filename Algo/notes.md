@@ -3486,6 +3486,1032 @@ public class Solution {
 ```
 [Top](#top)
 
+## #73. Set Matrix Zeroes <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public void setZeroes(int[][] matrix) {
+        int m = matrix.length, n = matrix[0].length;
+        boolean r0=false,c0=false;
+        for(int i=0;i<m;i++) if(!r0&&matrix[i][0]==0) r0=true;
+        for(int i=0;i<n;i++) if(!c0&&matrix[0][i]==0) c0=true;
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                if(matrix[i][j]==0) matrix[i][0]=matrix[0][j]=0;
+            }
+        }
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                if(matrix[i][0]==0||matrix[0][j]==0) matrix[i][j] = 0;
+            }
+        }
+        if(r0)for(int i=0;i<m;i++) matrix[i][0]=0;
+        if(c0)for(int i=0;i<n;i++) matrix[0][i]=0;
+    }
+}
+```
+[Top](#top)
+
+## #74. Search a 2D Matrix <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if(matrix.length==0||matrix[0].length==0||target<matrix[0][0]) return false;
+        int start=0,end=matrix.length;
+        while(start<end){
+            if(start+1==end) return bs(matrix[start],0,matrix[0].length,target);;
+            int m = (start+end)/2;
+            if(matrix[m][0]==target) return true;
+            else if(matrix[m][0]>target) end=m;
+            else start = m;
+        }
+        return bs(matrix[start],0,matrix[0].length,target);
+    }
+    
+    boolean bs(int[] arr,int start, int end, int target){
+        while(start<end){
+            int m = (start+end)/2;
+            if (arr[m]==target) return true;
+            else if(arr[m]>target) return bs(arr,start,m,target);
+            else return bs(arr,m+1,end,target);
+        }
+        return false;
+    }
+}
+```
+[Top](#top)
+
+## #75. Sort Colors <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public void sortColors(int[] nums) {
+        int[] count = new int[3];
+        for(int i:nums) count[i]++;
+        int i=0,c=0;
+        while(i<nums.length){
+            if(count[c]-->0) nums[i++]=c;
+            else c++;
+        }
+    }
+}
+```
+[Top](#top)
+
+## # <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public String minWindow(String s, String t) {
+        Map<Character,Integer> map = new HashMap<>();
+        int k=0;
+        int minL = s.length()+1,minStart=0,minEnd=0;
+        for(char c:t.toCharArray()){
+            if (!map.containsKey(c)){
+                map.put(c,1);
+                k++;
+            }
+            else map.put(c,map.get(c)+1);
+        }
+        for(int start=0, end=0;start<s.length();start++){
+            // find enough chars
+            for(;k>0 && end<s.length();end++){
+                char c = s.charAt(end);
+                if(map.containsKey(c)){
+                    int count = map.get(c);
+                    map.put(c,count-1);
+                    if(count==1){
+                        k--;  
+                    } 
+                }
+            }
+            if(k>0) break;
+            // refine start
+            for(;start<s.length();start++){
+                char c = s.charAt(start);
+                if(map.containsKey(c)){
+                    int count = map.get(c);
+                    map.put(c,count+1);
+                    if(count==0) {
+                        k++;
+                        break;
+                    }
+                }
+            }
+            if(minL>end-start){
+                minL=end-start;
+                minStart=start;
+                minEnd=end;
+            }
+        }  
+        return s.substring(minStart,minEnd);
+    }
+}
+```
+[Top](#top)
+
+## #76. Minimum Window Substring <a name="n76"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+
+```
+[Top](#top)
+
+## #77. Combinations <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    private boolean[] used;
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    private int k,n;
+    
+    public List<List<Integer>> combine(int n, int k) {
+        this.used = new boolean[n];
+        this.k = k;
+        this.n = n;
+        help(0);
+        return ret;
+    }
+    
+    void help(int start){
+        if(list.size()==k) ret.add(new ArrayList(list));
+        for(int i=start;i<n;i++){
+            if(used[i]) continue;
+            list.add(i+1);
+            used[i]=true;
+            help(i);
+            used[i]=false;
+            list.remove(list.size()-1);
+        }
+    }
+}
+
+public class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> result = new ArrayList<List<Integer>>();
+        if (k > n || k < 0) {
+            return result;
+        }
+        if (k == 0) {
+            result.add(new ArrayList<Integer>());
+            return result;
+        }
+        result = combine(n - 1, k - 1);
+        for (List<Integer> list : result) {
+            list.add(n);
+        }
+        result.addAll(combine(n - 1, k));
+        return result;
+    }
+}
+
+```
+[Top](#top)
+
+## #78. Subsets <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    private boolean[] used;
+    private int n;
+    
+    public List<List<Integer>> subsets(int[] nums) {
+        used = new boolean[nums.length];
+        n = nums.length;
+        help(nums,0);
+        return ret;
+    }
+    
+    void help(int[] nums,int start){
+        ret.add(new ArrayList(list));
+        for(int i = start;i<n;i++){
+            if(used[i]) continue;
+            used[i] = true;
+            list.add(nums[i]);
+            help(nums,i+1);
+            list.remove(list.size()-1);
+            used[i] = false;
+        }
+    }
+}
+```
+[Top](#top)
+
+## #79. Word Search <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    private char[][] board;
+    private String word;
+    private boolean[][] used;
+    
+    public boolean exist(char[][] board, String word) {
+        this.board = board;
+        this.word = word;
+        this.used = new boolean[board.length][board[0].length];
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[0].length;j++){
+                if(board[i][j]==word.charAt(0)&&help(i,j,0)) return true;
+            }
+        }
+        return false;
+    }
+    
+    boolean help(int x, int y,int k){
+        if(board[x][y]!=word.charAt(k)) return false;
+        if(k==word.length()-1) return true;
+        used[x][y] = true;
+        for(int i=0;i<4;i++){
+            int m = (4-i)%3-1+x, n = (i+1)/2-1+y;
+            if(m<0||n<0||m>=board.length||n>=board[0].length||used[m][n]) continue;
+            if(help(m,n,k+1)) return true;
+        }
+        used[x][y] = false;
+        return false;
+    }
+}
+```
+[Top](#top)
+
+## #80. Remove Duplicates from Sorted Array II <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int removeDuplicates(int[] nums) {
+        if(nums.length==0) return 0;
+        int prev = nums[0]-1,p=0, prevCount=1;
+        for(int i=0;i<nums.length;i++){
+            if(nums[i]!=prev){ 
+                nums[p++] = nums[i];
+                prev = nums[i];
+                prevCount = 1;
+            }
+            else if(prevCount++<2){
+                nums[p++] = nums[i];
+            }
+        }
+        return p;
+    }
+}
+```
+[Top](#top)
+
+## #81. Search in Rotated Sorted Array II <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public boolean search(int[] nums, int target) {
+        return rbs(nums,0,nums.length,target);
+    }
+    
+    boolean rbs(int[] nums, int start, int end, int target){
+        //System.out.println(start+":"+end);
+        if(start==end) return false;
+        if(end-start==1) return nums[start]==target;
+        if(nums[start]<nums[end-1]) return bs(nums,start,end,target);
+        int m = start+(end-start)/2;
+        if(nums[m]==target||target==nums[start]||target==nums[end-1]) return true;
+        if(end-start==2) return false;
+        if(nums[start]==nums[nums.length-1]){
+            if(nums[m]==nums[start]) return rbs(nums,start+1,m,target)||rbs(nums,m+1,end-1,target);
+            if(nums[m]>nums[start]){
+                if(target<nums[start]||target>nums[m]) return rbs(nums,m+1,end-1,target);
+                return bs(nums,start+1,m,target);
+            }
+            else{
+                if(target<nums[m]||target>nums[end-1]) return rbs(nums,start+1,m,target);
+                return bs(nums,m+1,end-1,target);
+            }
+        }
+        else{
+            if(nums[m]>=nums[start]){
+                if(target<nums[start]||target>nums[m]) return rbs(nums,m+1,end-1,target);
+                return bs(nums,start+1,m,target);
+            }
+            else{
+                if(target<nums[m]||target>nums[end-1]) return rbs(nums,start+1,m,target);
+                return bs(nums,m+1,end-1,target);
+            }
+        }
+    }
+    
+    boolean bs(int[] nums,int start, int end, int target){
+        if(start==end) return false;
+        int m = start+(end-start)/2;
+        if (nums[m]==target) return true;
+        if (nums[m]<target) return bs(nums,m+1,end,target);
+        return bs(nums,start,m,target);
+    }
+}
+```
+[Top](#top)
+
+## #82. Remove Duplicates from Sorted List II  <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode ret = new ListNode(0), curr=head, prev=ret;
+        ret.next = head;
+        while(curr!=null&&curr.next!=null){
+            while(curr.next!=null&&curr.next.val!=curr.val) {
+                prev=curr;
+                curr=curr.next;
+            }
+            if(curr.next==null) return ret.next;
+            while(curr.next!=null&&curr.next.val==curr.val) curr=curr.next;
+            prev.next=curr.next;
+            curr = curr.next;
+        }
+        return ret.next;
+    }
+}
+```
+[Top](#top)
+
+## #83. Remove Duplicates from Sorted List <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head==null) return head;
+        ListNode ret = new ListNode(head.val-1), prev = ret, curr = head;
+        ret.next = head;
+        while(curr!=null){
+            while(curr!=null&&curr.val!=prev.val){
+                prev = curr;
+                curr = curr.next;
+            }
+            if(curr==null) break;
+            while(curr!=null&&prev.val==curr.val) curr = curr.next;
+            prev.next = curr;
+        }
+        return ret.next;
+    }
+}
+```
+[Top](#top)
+
+## #84. Largest Rectangle in Histogram <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int largestRectangleArea(int[] heights) {
+        Stack<Integer> stack = new Stack<>();
+        int max = 0;
+        stack.push(-1);
+        for(int i=0;i<=heights.length;i++){
+            int h = i==heights.length?0:heights[i];
+            while(stack.peek()>-1&&heights[stack.peek()]>h){
+                max = Math.max(heights[stack.pop()]*(i-stack.peek()-1),max);
+            }
+            if(i>heights.length-2||heights[i]!=heights[i+1]) stack.push(i);
+        }
+        return max;
+    }
+}
+```
+using array as stack
+```java
+public class Solution {
+    public int largestRectangleArea(int[] heights) {
+        int[] stack = new int[heights.length+2];
+        int max = 0, p = -1;
+        stack[++p] = -1;
+        for(int i=0;i<=heights.length;i++){
+            int h = i==heights.length?0:heights[i];
+            while(p>0&&heights[stack[p]]>h){
+                max = Math.max(heights[stack[p--]]*(i-stack[p]-1),max);
+            }
+            if(i>heights.length-2||heights[i]!=heights[i+1]) stack[++p]=i;
+        }
+        return max;
+    }
+}
+```
+[Top](#top)
+
+## #85. Maximal Rectangle <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int maximalRectangle(char[][] matrix) {
+        if(matrix.length == 0) return 0;
+        int ret = 0;
+        int[] height = new int[matrix[0].length], left = new int[matrix[0].length], right = new int[matrix[0].length];
+        for(int i=0;i<matrix.length;i++){
+            int lastLeft = 0, lastRight = matrix[0].length-1;
+            for(int j=0;j<matrix[0].length;j++){
+                if(matrix[i][j]=='0') {
+                    left[j] = height[j] = 0;
+                    lastLeft = j+1;
+                }
+                else {
+                    height[j]++;
+                    left[j] = Math.max(left[j],lastLeft);
+                }
+            }
+            for(int j=matrix[0].length-1;j>=0;j--){
+                if(matrix[i][j]=='0') {
+                    lastRight = j-1;
+                    right[j] = matrix[0].length-1;
+                }
+                else {
+                    right[j] = Math.min(lastRight,i==0?matrix[0].length-1:right[j]);
+                    ret = Math.max(ret, (right[j]-left[j]+1)*height[j]);
+                }
+            }
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #86. Partition List <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public ListNode partition(ListNode head, int x) {
+        ListNode ret = new ListNode(0), curr=head, p=ret,ret2 = new ListNode(0),q=ret2;
+        while(curr!=null){
+            if(curr.val<x){
+                p.next = curr;
+                p=p.next;
+            }
+            else{
+                q.next = curr;
+                q=q.next;
+            }
+            curr=curr.next;
+        }
+        p.next = ret2.next;
+        q.next = null;
+        return ret.next;
+    }
+}
+```
+[Top](#top)
+
+## #87. Scramble String <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    private int len;
+    private boolean[][][] dp;
+    private boolean[][][] visited;
+    private String s1,s2;
+    
+    public boolean isScramble(String s1, String s2) {
+        this.s1=s1;
+        this.s2=s2;
+        this.len = s1.length();
+        this.dp = new boolean[len][len][len+1];
+        this.visited = new boolean[len][len][len+1];
+        return  help(0,0,len);
+    }
+    
+    boolean help(int i,int j,int l){
+        if(!visited[i][j][l]) {
+            boolean res = false;
+            if(l==0) res = true;
+            else if(l==1){
+                res = s1.charAt(i)==s2.charAt(j);
+            }
+            else{
+                for(int t = 1,s=l-1;t<l&&res==false;t++,s--){
+                    res = help(i,j,t) && help(i+t,j+t,s) || help(i,j+s,t) && help(i+t,j,s);
+                }
+            }
+            dp[i][j][l] = res;
+            visited[i][j][l] = true;
+        }
+        return dp[i][j][l];
+    }
+}
+```
+[Top](#top)
+
+## #88. Merge Sorted Array <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        for(int i=m+n-1;i>=0;i--){
+            if(n==0) return;
+            if(m!=0&&nums1[m-1]>nums2[n-1]) nums1[i] = nums1[--m];
+            else nums1[i] = nums2[--n];
+        }
+    }
+}
+```
+[Top](#top)
+
+## #89. Gray Code <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public List<Integer> grayCode(int n) {
+        List<Integer> ret = new ArrayList<>();
+        ret.add(0);
+        int count=0,loop=1;
+        while(count++<n){
+            for(int i=loop-1;i>=0;i--) ret.add(loop+ret.get(i));
+            loop<<=1;
+        }
+        return ret;
+    }
+}
+```
+[Top](#top)
+
+## #90. Subsets II <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    private List<List<Integer>> ret = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    private boolean[] used;
+    private int n;
+    
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        used = new boolean[nums.length];
+        n = nums.length;
+        Arrays.sort(nums);
+        help(nums,0);
+        return ret;
+    }
+    
+    void help(int[] nums,int start){
+        int prev = nums[0]-1;
+        ret.add(new ArrayList(list));
+        for(int i = start;i<n;i++){
+            if(used[i]||prev==nums[i]) continue;
+            prev = nums[i];
+            used[i] = true;
+            list.add(nums[i]);
+            help(nums,i+1);
+            list.remove(list.size()-1);
+            used[i] = false;
+        }
+    }
+}
+```
+[Top](#top)
+
+## #91. Decode Ways <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public int numDecodings(String s) {
+        if(s.length()==0||s.charAt(0)=='0') return 0;
+        int[] ret = new int[s.length()+1];
+        ret[0] = ret[1] = 1;
+        for(int i=1;i<s.length();i++){
+            int c = s.charAt(i)-48, p = s.charAt(i-1)-48;
+            if(c!=0) ret[i+1]=ret[i];
+            if(p!=0&&p*10+c<=26) ret[i+1]+=ret[i-1];
+        }
+        return ret[s.length()];
+    }
+}
+```
+[Top](#top)
+
+## # <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+public class Solution {
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if(m==n) return head;
+        ListNode ret = new ListNode(0), p=ret,q=ret;
+        ret.next = head;
+        for(int i=0;i<=n;i++){
+            if(i<m-1) p=p.next;
+            q = q.next;
+        }
+        ListNode prev = p, curr = p.next;
+        while(curr!=q){
+            ListNode next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+        p.next.next = q;
+        p.next = prev;
+        return ret.next;
+    }
+}
+```
+[Top](#top)
+
+## #92. Reverse Linked List II <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+
+```
+[Top](#top)
+
+## # <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+
+```
+[Top](#top)
+
+## # <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+
+```
+[Top](#top)
+
+## # <a name="n"></a>
+
+#### Problem Statement ([link]())
+###### TAG 
+
+#### Thought
+#####  - Key word
+#####  - Key Idea
+#####  - Complexity 
+Time:  
+Space:  
+#####  - Boundary Conditions
+#####  - Mistakes
+#####  - Further Considerations
+#####  - Related Problems
+
+#### Solution
+```java
+
+```
+[Top](#top)
+
 ## # <a name="n"></a>
 
 #### Problem Statement ([link]())
